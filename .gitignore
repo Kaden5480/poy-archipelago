@@ -1,0 +1,6 @@
+**/.vs
+**/*.apworld
+**/*.zip
+**/bin
+**/obj
+**/GamePath.props
