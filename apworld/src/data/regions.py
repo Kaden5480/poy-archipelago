@@ -11,7 +11,6 @@ class CabinName(StrEnum):
 
 
 class PeakName(StrEnum):
-
     # Fundamentals
     GALES_GREENHORNS_TOP         = "Greenhorn's Top"
     GALES_PALTRY_PEAK            = "Paltry Peak"
