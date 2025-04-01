@@ -9,6 +9,7 @@ class CabinName(StrEnum):
     NORTHERN = "Northern Cabin"
     ALPS     = "Alps Cabin"
 
+
 class PeakName(StrEnum):
 
     # Fundamentals
@@ -238,7 +239,6 @@ class PoYRegion(Region):
         connections.append(connection)
 
 
-# Cabin regions don't need to implement anything extra
 class CabinRegion(PoYRegion):
     category: CabinCategory
 
