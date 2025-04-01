@@ -236,8 +236,8 @@ class PoYRegions:
         Initializes the region information for all regions.
 
         :param handler: The ID handler for assigning IDs to regions
-
         """
+
         self.handler = handler
 
         self.gales_cabin = CabinRegion(
