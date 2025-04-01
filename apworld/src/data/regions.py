@@ -89,6 +89,7 @@ class CabinCategory(IntEnum):
     Northern = 1
     Alps = 2
 
+
 class PeakCategory(IntEnum):
     GalesFundamentals = 0
     GalesIntermediate = 1
@@ -97,6 +98,7 @@ class PeakCategory(IntEnum):
     AlpsEssentials = 4
     AlpsGreats = 5
     AlpsArctic = 6
+
 
 class PoYRegion(Region):
     id: int
@@ -151,11 +153,12 @@ class PoYRegion(Region):
 
         connections.append(connection)
 
+
 # Cabin regions don't need to implement anything extra
 class CabinRegion(PoYRegion):
     category: CabinCategory
 
-    def __init__(self, id: int, name: str, category; CabinCategory, *args, **kwargs) -> None:
+    def __init__(self, id: int, name: str, category: CabinCategory, *args, **kwargs) -> None:
         """
         Initializes a CabinRegion.
 
