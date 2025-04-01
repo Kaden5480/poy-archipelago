@@ -4,7 +4,7 @@ from enum import IntEnum, \
 from BaseClasses import CollectionState, \
                         Region
 
-class PeakNames(StrEnum):
+class PeakName(StrEnum):
     CABIN_GALES    = "Great Gales Cabin"
     CABIN_NORTHERN = "Northern Cabin"
     CABIN_ALPS     = "Alps Cabin"
@@ -84,7 +84,7 @@ class PeakNames(StrEnum):
     ALPS_MOUNT_MHORGORM          = "Mount Mhòrgorm"
 
 
-gales_fundamentals: list[PeakNames] = [
+gales_fundamentals: list[PeakName] = [
     GALES_GREENHORNS_TOP,
     GALES_PALTRY_PEAK,
     GALES_OLD_MILL,
@@ -107,7 +107,7 @@ gales_fundamentals: list[PeakNames] = [
     GALES_WUTHERING_CREST,
 ]
 
-gales_intermediate: list[PeakNames] = [
+gales_intermediate: list[PeakName] = [
     GALES_PORTERS_BOULDER,
     GALES_JOTUNNS_THUMB,
     GALES_OLD_SKERRY,
@@ -120,7 +120,7 @@ gales_intermediate: list[PeakNames] = [
     GALES_CROMLECH,
 ]
 
-gales_advanced: list[PeakNames] = [
+gales_advanced: list[PeakName] = [
     GALES_WALKERS_PILLAR,
     GALES_GREAT_GAOL,
     GALES_ELDENHORN,
@@ -128,12 +128,12 @@ gales_advanced: list[PeakNames] = [
     GALES_YMIRS_SHADOW,
 ]
 
-northern_expert: list[PeakNames] = [
+northern_expert: list[PeakName] = [
     NORTHERN_GREAT_BULWARK,
     NORTHERN_SOLEMN_TEMPEST,
 ]
 
-alps_essentials: list[PeakNames] = [
+alps_essentials: list[PeakName] = [
     ALPS_TUTORS_TOWER,
     ALPS_STOUGR_BOULDER,
     ALPS_MARAS_ARCH,
@@ -148,7 +148,7 @@ alps_essentials: list[PeakNames] = [
     ALPS_ELJUNS_FOLLY,
 ]
 
-alps_greats: list[PeakNames] = [
+alps_greats: list[PeakName] = [
     ALPS_EINVALD_FALLS,
     ALPS_ALMATTR_DAM,
     ALPS_DUNDERHORN,
@@ -156,7 +156,7 @@ alps_greats: list[PeakNames] = [
     ALPS_WELKIN_PASS,
 ]
 
-alps_arctic: list[PeakNames] = [
+alps_arctic: list[PeakName] = [
     ALPS_SEIGR_CRAEG,
     ALPS_ULLRS_CHASM,
     ALPS_GREAT_SILF,
@@ -314,9 +314,9 @@ class PoYRegions:
     northern_cabin: CabinRegion
     alps_cabin: CabinRegion
 
-    gales_peaks: dict[PeakNames, PeakRegion]
-    northern_peaks: dict[PeakNames, PeakRegion]
-    alps_peaks: dict[PeakNames, PeakRegion]
+    gales_peaks: dict[PeakName, PeakRegion]
+    northern_peaks: dict[PeakName, PeakRegion]
+    alps_peaks: dict[PeakName, PeakRegion]
 
     def __init__(self, handler: IDHandler) -> None:
         """
@@ -328,13 +328,13 @@ class PoYRegions:
         self.handler = handler
 
         self.gales_cabin = CabinRegion(
-            handler.new_id(), PeakNames.CABIN_GALES.value, CabinCategory.Gales
+            handler.new_id(), PeakName.CABIN_GALES.value, CabinCategory.Gales
         )
         self.northern_cabin = CabinRegion(
-            handler.new_id(), PeakNames.CABIN_NORTHERN.value, CabinCategory.Northern
+            handler.new_id(), PeakName.CABIN_NORTHERN.value, CabinCategory.Northern
         )
         self.alps_cabin = CabinRegion(
-            handler.new_id(), PeakNames.CABIN_ALPS.value, CabinCategory.Alps
+            handler.new_id(), PeakName.CABIN_ALPS.value, CabinCategory.Alps
         )
 
         # Great Gales
@@ -365,8 +365,8 @@ class PoYRegions:
     def create_category(
         self,
         category: PeakCategory,
-        peaks: list[PeakNames]
-    ) -> dict[PeakNames, PeakRegion]:
+        peaks: list[PeakName]
+    ) -> dict[PeakName, PeakRegion]:
         """
         Creates a dictionary mapping
         peak names to regions for a given category.
