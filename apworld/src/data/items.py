@@ -116,7 +116,7 @@ class ItemName(StrEnum):
 
 class PoYItem:
     id: int
-    name: ItemName
+    name: str
     classification: ItemClassification
 
     def __init__(self, id: int, name: ItemName, classification: ItemClassification) -> None:
@@ -129,13 +129,17 @@ class PoYItem:
         """
 
         self.id = id
-        self.name = name
+        self.name = name.value
         self.classification = classification
 
+
 class PoYItems:
-    collectables_base: list[PoYItem]
-    collectables_dlc: list[PoYItem]
-    tools: list[PoYItem]
+    collectables_base: dict[str, PoYItem]
+    collectables_dlc: dict[str, PoYItem]
+    tools: dict[str, PoYItem]
+
+    # All items
+    items: dict[str, PoYItem]
 
     def __init__(self, handler: IDHandler) -> None:
         """
@@ -144,7 +148,7 @@ class PoYItems:
         :param handler: The ID handler for assigning IDs to items
         """
 
-        self.collectables_base = [
+        self.collectables_base = self.items_as_dict([
             # Artefacts
             PoYItem(handler.new_id(), ItemName.HAT_OLD_MILL,                      ItemClassification.progression),
             PoYItem(handler.new_id(), ItemName.PICTURE_GRAY_GULLY,                ItemClassification.progression),
@@ -199,9 +203,9 @@ class PoYItems:
             PoYItem(handler.new_id(), ItemName.NPC_ROPE_WALKERS_PILLAR,           ItemClassification.filler),
             PoYItem(handler.new_id(), ItemName.NPC_ROPE_GREAT_GAOL,               ItemClassification.filler),
             PoYItem(handler.new_id(), ItemName.NPC_ROPE_ST_HAELGA,                ItemClassification.filler),
-        ]
+        ])
 
-        self.collectables_dlc = [
+        self.collectables_dlc = self.items_as_dict([
             # Gentiana
             PoYItem(handler.new_id(), ItemName.GENTIANA_MARAS_ARCH,               ItemClassification.progression),
             PoYItem(handler.new_id(), ItemName.GENTIANA_TREPPENWALD,              ItemClassification.progression),
@@ -241,9 +245,9 @@ class PoYItems:
             PoYItem(handler.new_id(), ItemName.IDOL_OF_SUNDOWN_2,                 ItemClassification.progression),
             PoYItem(handler.new_id(), ItemName.IDOL_OF_SEEDS_1,                   ItemClassification.useful | ItemClassification.progression),
             PoYItem(handler.new_id(), ItemName.IDOL_OF_SEEDS_2,                   ItemClassification.useful | ItemClassification.progression),
-        ]
+        ])
 
-        self.tools = [
+        self.tools = self.items_as_dict([
             PoYItem(handler.new_id(), ItemName.TOOL_BAROMETER_MAP,                ItemClassification.useful),
             PoYItem(handler.new_id(), ItemName.TOOL_CHALK_BAG,                    ItemClassification.useful),
             PoYItem(handler.new_id(), ItemName.TOOL_COFFEE,                       ItemClassification.useful),
@@ -256,4 +260,33 @@ class PoYItems:
             PoYItem(handler.new_id(), ItemName.TOOL_POCKETWATCH,                  ItemClassification.useful | ItemClassification.progression),
             PoYItem(handler.new_id(), ItemName.TOOL_ROPE,                         ItemClassification.useful),
             PoYItem(handler.new_id(), ItemName.TOOL_ROPE_DOUBLE,                  ItemClassification.useful),
+        ])
+
+        self.items = [
+            **self.collectables_base,
+            **self.collectables_dlc,
+            **self.tools,
         ]
+
+    def items_as_dict(self, items: list[PoYItem]) -> dict[str, PoYItem]:
+        """
+        Generates a dictionary mapping the names of items
+        to the items themselves.
+
+        :param items: The items to create a dictionary for
+        :returns: The generated dictionary
+        """
+
+        return dict([
+            (item.name, item) for item in items
+        ])
+
+    def get_item(self, name: str) -> PoYItem:
+        """
+        Gets an item given its name.
+
+        :param name: The name of the item to search for
+        :returns: The item with the given name
+        """
+
+        return self.items[name]
