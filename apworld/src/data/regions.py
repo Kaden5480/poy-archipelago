@@ -86,22 +86,6 @@ class PeakName(StrEnum):
     ALPS_MOUNT_MHORGORM          = "Mount Mhòrgorm"
 
 
-class CabinCategory(IntEnum):
-    Gales = 0
-    Northern = 1
-    Alps = 2
-
-
-class PeakCategory(IntEnum):
-    GalesFundamentals = 0
-    GalesIntermediate = 1
-    GalesAdvanced = 2
-    NorthernExpert = 3
-    AlpsEssentials = 4
-    AlpsGreats = 5
-    AlpsArctic = 6
-
-
 gales_fundamentals: list[PeakName] = [
     GALES_GREENHORNS_TOP,
     GALES_PALTRY_PEAK,
@@ -184,141 +168,68 @@ alps_arctic: list[PeakName] = [
 ]
 
 
-class PoYRegion(Region):
+class PoYRegion:
     id: int
     name: str
-    regions: list[PoYRegion]
-    connections: list[Entrance]
 
-    def __init__(self, id: int, name: str, *args, **kwargs) -> None:
+    def __init__(self, id: int, name: str) -> None:
         """
         Initializes a PoYRegion.
 
         :param id: The id of this region
         :param name: The name of this region
-        :param args: Arguments which can be passed to Region
-        :param kwargs: Keyword arguments which can be passed to Region
         """
 
         self.id = id
         self.name = name
-        self.regions = []
-        self.connections = []
-
-        super().__init__(*args, **kwargs)
-
-    def can_access(self, state: CollectionState) -> bool:
-        """
-        Determines whether this region can be accessed, given
-        the current state.
-
-        :param state: The current state to check against
-        """
-
-        return True
-
-    def link_to(self, region: PoYRegion, name: str = "") -> None:
-        """
-        Links this region to another region.
-
-        :param region: The region which this region links to
-        :param name: The name to assign to the created connection
-        """
-
-        regions.append(region)
-
-        if len(name) < 1:
-            name = f"{self.name} -> {region} connection"
-
-        connection: Entrance = self.connect(
-            region, name,
-            lambda state: region.can_access(state)
-        )
-
-        connections.append(connection)
 
 
 class CabinRegion(PoYRegion):
-    category: CabinCategory
-
-    def __init__(self, id: int, name: CabinName, category: CabinCategory, *args, **kwargs) -> None:
+    def __init__(self, id: int, name: CabinName) -> None:
         """
         Initializes a CabinRegion.
 
         :param id: The id of this cabin
         :param name: The name of this cabin
-        :param category: The category (book) this cabin region is from
-        :param args: Arguments which can be passed to Region
-        :param kwargs: Keyword arguments which can be passed to Region
         """
 
-        self.category = category
-        super().__init__(id, name.value, *args, **kwargs)
-
-    def can_access(self, state: CollectionState) -> bool:
-        """
-        Determines whether this cabin can be accessed, given
-        the current state.
-
-        :param state: The current state to check against
-        """
-
-        return True
+        super().__init__(id, name.value)
 
 
 class PeakRegion(PoYRegion):
-    category: PeakCategory
-
-    def __init__(self, id: int, name: PeakName, category: PeakCategory, *args, **kwargs) -> None:
+    def __init__(self, id: int, name: PeakName) -> None:
         """
         Initializes a PeakRegion.
 
         :param id: The id of this peak
         :param name: The name of this peak
-        :param category: The category (book) this peak region is from
-        :param args: Arguments which can be passed to Region
-        :param kwargs: Keyword arguments which can be passed to Region
         """
 
-        self.category = category
-        super().__init__(id, name.value, *args, **kwargs)
-
-    def can_access(self, state: CollectionState) -> bool:
-        """
-        Determines whether this peak can be accessed.
-
-        :param state: The current state to check against
-        """
-
-        return state.has(f"{category.name} Book")
-
-    def link_to(self, cabin: CabinRegion, next_peak: PeakRegion | None) -> None:
-        """
-        Links a peak to its next peak (if there is one)
-        and back to the cabin through the Stamper.
-
-        :param cabin: The cabin which can be returned to from this peak
-        :param next_peak: The peak which comes after this one, or None
-        """
-
-        super().link_to(cabin, f"{self.name} return to cabin")
-
-        if next_peak is None:
-            return
-
-        super().link_to(next_peak, f"{next_peak.name} -> {self.name} through stamper")
+        super().__init__(id, name.value)
 
 
 class PoYRegions:
     handler: IDHandler
 
+    # Cabins
     gales_cabin: CabinRegion
     northern_cabin: CabinRegion
     alps_cabin: CabinRegion
 
+    # Great Gales
     gales_peaks: dict[PeakName, PeakRegion]
+    gales_fundamental_peaks: dict[PeakName, PeakRegion]
+    gales_intermediate_peaks: dict[PeakName, PeakRegion]
+    gales_advanced_peaks: dict[PeakName, PeakRegion]
+
+    # Nothern Range
     northern_peaks: dict[PeakName, PeakRegion]
+
+    # Alps DLC
     alps_peaks: dict[PeakName, PeakRegion]
+    alps_essentials_peaks: dict[PeakName, PeakRegion]
+    alps_greats_peaks: dict[PeakName, PeakRegion]
+    alps_arctic_peaks: dict[PeakName, PeakRegion]
 
     def __init__(self, handler: IDHandler) -> None:
         """
@@ -330,43 +241,42 @@ class PoYRegions:
         self.handler = handler
 
         self.gales_cabin = CabinRegion(
-            handler.new_id(), CabinName.GALES, CabinCategory.Gales
+            handler.new_id(), CabinName.GALES
         )
         self.northern_cabin = CabinRegion(
-            handler.new_id(), CabinName.NORTHERN, CabinCategory.Northern
+            handler.new_id(), CabinName.NORTHERN
         )
         self.alps_cabin = CabinRegion(
-            handler.new_id(), CabinName.ALPS, CabinCategory.Alps
+            handler.new_id(), CabinName.ALPS
         )
 
         # Great Gales
-        gales_fundamental_peaks = self.create_category(PeakCategory.GalesFundamentals, gales_fundamentals)
-        gales_intermediate_peaks = self.create_category(PeakCategory.GalesIntermediate, gales_intermediate)
-        gales_advanced_peaks = self.create_category(PeakCategory.GalesAdvanced, gales_advanced)
+        self.gales_fundamental_peaks = self.create_category(gales_fundamentals)
+        self.gales_intermediate_peaks = self.create_category(gales_intermediate)
+        self.gales_advanced_peaks = self.create_category(gales_advanced)
 
         self.gales_peaks = {
-            **gales_fundamental_peaks,
-            **gales_intermediate_peaks,
-            **gales_advanced_peaks,
+            **self.gales_fundamental_peaks,
+            **self.gales_intermediate_peaks,
+            **self.gales_advanced_peaks,
         }
 
         # Northern Range
-        self.northern_peaks = self.create_category(PeakCategory.NorthernExpert, northern_expert)
+        self.northern_peaks = self.create_category(northern_expert)
 
         # Alps DLC
-        alps_essentials_peaks = self.create_category(PeakCategory.AlpsEssentials, alps_essentials)
-        alps_great_peaks = self.create_category(PeakCategory.AlpsGreats, alps_greats)
-        alps_arctic_peaks = self.create_category(PeakCategory.AlpsArctic, alps_arctic)
+        self.alps_essentials_peaks = self.create_category(alps_essentials)
+        self.alps_great_peaks = self.create_category(alps_greats)
+        self.alps_arctic_peaks = self.create_category(alps_arctic)
 
         self.alps_peaks = [
-            **alps_essentials_peaks,
-            **alps_greats_peaks,
-            **alps_arctic_peaks,
+            **self.alps_essentials_peaks,
+            **self.alps_greats_peaks,
+            **self.alps_arctic_peaks,
         ]
 
     def create_category(
         self,
-        category: PeakCategory,
         peaks: list[PeakName]
     ) -> dict[PeakName, PeakRegion]:
         """
@@ -374,62 +284,10 @@ class PoYRegions:
         peak names to regions for a given category.
 
         :param handler: The handler used for assigning IDs
-        :param peaks: The peak names under a given category
-        :param category: The category these peaks are within
+        :param peaks: The peak names within this region
         """
 
         return dict([
-            (peak, PeakRegion(self.handler.new_id(), peak.value, category))
+            (peak, PeakRegion(self.handler.new_id(), peak.value))
             for peak in peaks
         ])
-
-    def create_conns() -> None:
-        """
-        Creates connections between all regions.
-        """
-
-        # Tickets to northern range and alps DLC
-        self.gales_cabin.link_to(self.northern_cabin)
-        self.gales_cabin.link_to(self.alps_cabin)
-
-        # Tickets to gales and alps DLC
-        self.northern_cabin.link_to(self.gales_cabin)
-        self.northern_cabin.link_to(self.alps_cabin)
-
-        # Ticket to gales
-        self.alps_cabin.link_to(self.gales_cabin)
-
-        # Link cabins to peaks
-        self.create_peak_conns(self.gales_cabin, list(self.gales_peaks.values))
-        self.create_peak_conns(self.northern_cabin, list(self.northern_peaks.values))
-        self.create_peak_conns(self.alps_cabin, list(self.alps_peaks))
-
-    def create_peak_conns(
-        cabin: CabinRegion,
-        peaks: list[PeakRegion]
-    ) -> None:
-        """
-        Creates connections between
-        cabins and their corresponding peaks.
-
-        :param cabin: The cabin for the list of peaks
-        :param peaks: The list of peaks which can be accessed
-                      from the provided cabin
-        """
-
-        peaks_len = len(peaks)
-        for i, peak in enumerate(peaks):
-            # The link from the cabin to the peak
-            # is through the bag on the peak
-            cabin.link_to(peak)
-
-            # The last peak in the list can't access
-            # the next peak from the stamper, as there isn't
-            # a next peak
-            next_peak: PeakRegion | None = None
-            if i < peaks_len - 1:
-                next_peak = peaks[i + 1]
-
-            # The links to the next peak and back to
-            # the cabin through the stamper
-            peak.link_to(cabin, next_peak)
