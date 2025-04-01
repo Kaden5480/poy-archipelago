@@ -268,7 +268,7 @@ class PoYRegions:
         self.gales_peaks = [
             *gales_fundamental_peaks,
             *gales_intermediate_peaks,
-            *gales_advanced_names,
+            *gales_advanced_peaks,
         ]
 
         # Northern Range
