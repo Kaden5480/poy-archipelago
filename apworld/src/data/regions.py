@@ -4,10 +4,12 @@ from enum import IntEnum, \
 from BaseClasses import CollectionState, \
                         Region
 
+class CabinName(StrEnum):
+    GALES    = "Great Gales Cabin"
+    NORTHERN = "Northern Cabin"
+    ALPS     = "Alps Cabin"
+
 class PeakName(StrEnum):
-    CABIN_GALES    = "Great Gales Cabin"
-    CABIN_NORTHERN = "Northern Cabin"
-    CABIN_ALPS     = "Alps Cabin"
 
     # Fundamentals
     GALES_GREENHORNS_TOP         = "Greenhorn's Top"
@@ -82,6 +84,22 @@ class PeakName(StrEnum):
     ALPS_TOWERING_VISIR          = "Towering Vísir"
     ALPS_ELDRIS_WALL             = "Eldris Wall"
     ALPS_MOUNT_MHORGORM          = "Mount Mhòrgorm"
+
+
+class CabinCategory(IntEnum):
+    Gales = 0
+    Northern = 1
+    Alps = 2
+
+
+class PeakCategory(IntEnum):
+    GalesFundamentals = 0
+    GalesIntermediate = 1
+    GalesAdvanced = 2
+    NorthernExpert = 3
+    AlpsEssentials = 4
+    AlpsGreats = 5
+    AlpsArctic = 6
 
 
 gales_fundamentals: list[PeakName] = [
@@ -165,21 +183,6 @@ alps_arctic: list[PeakName] = [
     ALPS_MOUNT_MHORGORM,
 ]
 
-class CabinCategory(IntEnum):
-    Gales = 0
-    Northern = 1
-    Alps = 2
-
-
-class PeakCategory(IntEnum):
-    GalesFundamentals = 0
-    GalesIntermediate = 1
-    GalesAdvanced = 2
-    NorthernExpert = 3
-    AlpsEssentials = 4
-    AlpsGreats = 5
-    AlpsArctic = 6
-
 
 class PoYRegion(Region):
     id: int
@@ -239,7 +242,7 @@ class PoYRegion(Region):
 class CabinRegion(PoYRegion):
     category: CabinCategory
 
-    def __init__(self, id: int, name: str, category: CabinCategory, *args, **kwargs) -> None:
+    def __init__(self, id: int, name: CabinName, category: CabinCategory, *args, **kwargs) -> None:
         """
         Initializes a CabinRegion.
 
@@ -251,7 +254,7 @@ class CabinRegion(PoYRegion):
         """
 
         self.category = category
-        super().__init__(id, name, *args, **kwargs)
+        super().__init__(id, name.value, *args, **kwargs)
 
     def can_access(self, state: CollectionState) -> bool:
         """
@@ -267,7 +270,7 @@ class CabinRegion(PoYRegion):
 class PeakRegion(PoYRegion):
     category: PeakCategory
 
-    def __init__(self, id: int, name: str, category: PeakCategory, *args, **kwargs) -> None:
+    def __init__(self, id: int, name: PeakName, category: PeakCategory, *args, **kwargs) -> None:
         """
         Initializes a PeakRegion.
 
@@ -279,7 +282,7 @@ class PeakRegion(PoYRegion):
         """
 
         self.category = category
-        super().__init__(id, name, *args, **kwargs)
+        super().__init__(id, name.value, *args, **kwargs)
 
     def can_access(self, state: CollectionState) -> bool:
         """
@@ -323,18 +326,18 @@ class PoYRegions:
         Initializes the region information for all regions.
 
         :param handler: The ID handler for assigning IDs to regions
-        """
 
+        """
         self.handler = handler
 
         self.gales_cabin = CabinRegion(
-            handler.new_id(), PeakName.CABIN_GALES.value, CabinCategory.Gales
+            handler.new_id(), CabinName.GALES, CabinCategory.Gales
         )
         self.northern_cabin = CabinRegion(
-            handler.new_id(), PeakName.CABIN_NORTHERN.value, CabinCategory.Northern
+            handler.new_id(), CabinName.NORTHERN, CabinCategory.Northern
         )
         self.alps_cabin = CabinRegion(
-            handler.new_id(), PeakName.CABIN_ALPS.value, CabinCategory.Alps
+            handler.new_id(), CabinName.ALPS, CabinCategory.Alps
         )
 
         # Great Gales
