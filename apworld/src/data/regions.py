@@ -1,87 +1,168 @@
-from enum import IntEnum
+from enum import IntEnum, \
+                 StrEnum
 
 from BaseClasses import CollectionState, \
                         Region
 
-gales_fundamental_names = [
-    "Greenhorn's Top",
-    "Paltry Peak",
-    "Old Mill",
-    "Gray Gully",
-    "The Lighthouse",
-    "Old Man of Sjór",
-    "Giant's Shelf",
-    "Evergreen's End",
-    "The Twins",
-    "Old Grove's Skelf",
-    "Hangman's Leap",
-    "Land's End",
-    "Old Langr",
-    "Aldr Grotto",
-    "Three Brothers",
-    "Walter's Crag",
-    "The Great Crevice",
-    "Old Hagger",
-    "Ugsome Stórr",
-    "Wuthering Crest",
+class PeakNames(StrEnum):
+    CABIN_GALES    = "Great Gales Cabin"
+    CABIN_NORTHERN = "Northern Cabin"
+    CABIN_ALPS     = "Alps Cabin"
+
+    # Fundamentals
+    GALES_GREENHORNS_TOP         = "Greenhorn's Top"
+    GALES_PALTRY_PEAK            = "Paltry Peak"
+    GALES_OLD_MILL               = "Old Mill"
+    GALES_GRAY_GULLY             = "Gray Gully"
+    GALES_THE_LIGHTHOUSE         = "The Lighthouse"
+    GALES_OLD_MAN_OF_SJOR        = "Old Man of Sjór"
+    GALES_GIANTS_SHELF           = "Giant's Shelf"
+    GALES_EVERGREENS_END         = "Evergreen's End"
+    GALES_THE_TWINS              = "The Twins"
+    GALES_OLD_GROVES_SKELF       = "Old Grove's Skelf"
+    GALES_HANGMANS_LEAP          = "Hangman's Leap"
+    GALES_LANDS_END              = "Land's End"
+    GALES_OLD_LANGR              = "Old Langr"
+    GALES_ALDR_GROTTO            = "Aldr Grotto"
+    GALES_THREE_BROTHERS         = "Three Brothers"
+    GALES_WALTERS_CRAG           = "Walter's Crag"
+    GALES_THE_GREAT_CREVICE      = "The Great Crevice"
+    GALES_OLD_HAGGER             = "Old Hagger"
+    GALES_UGSOME_STORR           = "Ugsome Stórr"
+    GALES_WUTHERING_CREST        = "Wuthering Crest"
+
+    # Intermediate
+    GALES_PORTERS_BOULDER        = "Porter's Boulder"
+    GALES_JOTUNNS_THUMB          = "Jotunn's Thumb"
+    GALES_OLD_SKERRY             = "Old Skerry"
+    GALES_HAMARR_STONE           = "Hamarr Stone"
+    GALES_GIANTS_NOSE            = "Giant's Nose"
+    GALES_WALTERS_BOULDER        = "Walter's Boulder"
+    GALES_SUNDERED_SONS          = "Sundered Sons"
+    GALES_OLD_WEALDS_BOULDER     = "Old Weald's Boulder"
+    GALES_LEANING_SPIRE          = "Leaning Spire"
+    GALES_CROMLECH               = "Cromlech"
+
+    # Advanced
+    GALES_WALKERS_PILLAR         = "Walker's Pillar"
+    GALES_GREAT_GAOL             = "Great Gaol"
+    GALES_ELDENHORN              = "Eldenhorn"
+    GALES_ST_HAELGA              = "St. Haelga"
+    GALES_YMIRS_SHADOW           = "Ymir's Shadow"
+
+    # Expert
+    NORTHERN_GREAT_BULWARK       = "Great Bulwark"
+    NORTHERN_SOLEMN_TEMPEST      = "Solemn Tempest"
+
+    # Essentials
+    ALPS_TUTORS_TOWER            = "Tutor's Tower"
+    ALPS_STOUGR_BOULDER          = "Stougr Boulder"
+    ALPS_MARAS_ARCH              = "Mara's Arch"
+    ALPS_GRAINNE_SPIRE           = "Grainne Spire"
+    ALPS_GREAT_BOK_TREE          = "Great Bók Tree"
+    ALPS_TREPPENWALD             = "Treppenwald"
+    ALPS_CASTLE_OF_THE_SWAN_KING = "Castle of the Swan King"
+    ALPS_SEASIDE_TRIBUNE         = "Seaside Tribune"
+    ALPS_IVORY_GRANITES          = "Ivory Granites"
+    ALPS_OLD_REKKJA              = "Old Rekkja"
+    ALPS_QUIETUDE                = "Quietude"
+    ALPS_ELJUNS_FOLLY            = "Eljun's Folly"
+
+    # Alpine Greats
+    ALPS_EINVALD_FALLS           = "Einvald Falls"
+    ALPS_ALMATTR_DAM             = "Almáttr Dam"
+    ALPS_DUNDERHORN              = "Dunderhorn"
+    ALPS_MHOR_DRUIM              = "Mhòr Druim"
+    ALPS_WELKIN_PASS             = "Welkin Pass"
+
+    # Arduous and Arctic
+    ALPS_SEIGR_CRAEG             = "Seigr Craeg"
+    ALPS_ULLRS_CHASM             = "Ullr's Chasm"
+    ALPS_GREAT_SILF              = "Great Silf"
+    ALPS_TOWERING_VISIR          = "Towering Vísir"
+    ALPS_ELDRIS_WALL             = "Eldris Wall"
+    ALPS_MOUNT_MHORGORM          = "Mount Mhòrgorm"
+
+
+gales_fundamentals: list[PeakNames] = [
+    GALES_GREENHORNS_TOP,
+    GALES_PALTRY_PEAK,
+    GALES_OLD_MILL,
+    GALES_GRAY_GULLY,
+    GALES_THE_LIGHTHOUSE,
+    GALES_OLD_MAN_OF_SJOR,
+    GALES_GIANTS_SHELF,
+    GALES_EVERGREENS_END,
+    GALES_THE_TWINS,
+    GALES_OLD_GROVES_SKELF,
+    GALES_HANGMANS_LEAP,
+    GALES_LANDS_END,
+    GALES_OLD_LANGR,
+    GALES_ALDR_GROTTO,
+    GALES_THREE_BROTHERS,
+    GALES_WALTERS_CRAG,
+    GALES_THE_GREAT_CREVICE,
+    GALES_OLD_HAGGER,
+    GALES_UGSOME_STORR,
+    GALES_WUTHERING_CREST,
 ]
 
-gales_intermediate_names = [
-    "Porter's Boulder",
-    "Jotunn's Thumb",
-    "Old Skerry",
-    "Hamarr Stone",
-    "Giant's Nose",
-    "Walter's Boulder",
-    "Sundered Sons",
-    "Old Weald's Boulder",
-    "Leaning Spire",
-    "Cromlech",
+gales_intermediate: list[PeakNames] = [
+    GALES_PORTERS_BOULDER,
+    GALES_JOTUNNS_THUMB,
+    GALES_OLD_SKERRY,
+    GALES_HAMARR_STONE,
+    GALES_GIANTS_NOSE,
+    GALES_WALTERS_BOULDER,
+    GALES_SUNDERED_SONS,
+    GALES_OLD_WEALDS_BOULDER,
+    GALES_LEANING_SPIRE,
+    GALES_CROMLECH,
 ]
 
-gales_advanced_names = [
-    "Walker's Pillar",",
-    "Great Gaol",
-    "Eldenhorn",
-    "St. Haelga",
-    "Ymir's Shadow",
+gales_advanced: list[PeakNames] = [
+    GALES_WALKERS_PILLAR,
+    GALES_GREAT_GAOL,
+    GALES_ELDENHORN,
+    GALES_ST_HAELGA,
+    GALES_YMIRS_SHADOW,
 ]
 
-northern_expert_names = [
-    "Great Bulwark",
-    "Solemn Tempest",
+northern_expert: list[PeakNames] = [
+    NORTHERN_GREAT_BULWARK,
+    NORTHERN_SOLEMN_TEMPEST,
 ]
 
-alps_essentials_names = [
-    "Tutor's Tower",
-    "Stougr Boulder",
-    "Mara's Arch",
-    "Grainne Spire",
-    "Great Bók Tree",
-    "Treppenwald",
-    "Castle of the Swan King",
-    "Seaside Tribune",
-    "Ivory Granites",
-    "Old Rekkja",
-    "Quietude",
-    "Eljun's Folly",
+alps_essentials: list[PeakNames] = [
+    ALPS_TUTORS_TOWER,
+    ALPS_STOUGR_BOULDER,
+    ALPS_MARAS_ARCH,
+    ALPS_GRAINNE_SPIRE,
+    ALPS_GREAT_BOK_TREE,
+    ALPS_TREPPENWALD,
+    ALPS_CASTLE_OF_THE_SWAN_KING,
+    ALPS_SEASIDE_TRIBUNE,
+    ALPS_IVORY_GRANITES,
+    ALPS_OLD_REKKJA,
+    ALPS_QUIETUDE,
+    ALPS_ELJUNS_FOLLY,
 ]
 
-alps_greats_names = [
-    "Einvald Falls",
-    "Almáttr Dam",
-    "Dunderhorn",
-    "Mhòr Druim",
-    "Welkin Pass",
+alps_greats: list[PeakNames] = [
+    ALPS_EINVALD_FALLS,
+    ALPS_ALMATTR_DAM,
+    ALPS_DUNDERHORN,
+    ALPS_MHOR_DRUIM,
+    ALPS_WELKIN_PASS,
 ]
 
-alps_arctic_names = [
-    "Seigr Craeg",
-    "Ullr's Chasm",
-    "Great Silf",
-    "Towering Vísir",
-    "Eldris Wall",
-    "Mount Mhòrgorm",
+alps_arctic: list[PeakNames] = [
+    ALPS_SEIGR_CRAEG,
+    ALPS_ULLRS_CHASM,
+    ALPS_GREAT_SILF,
+    ALPS_TOWERING_VISIR,
+    ALPS_ELDRIS_WALL,
+    ALPS_MOUNT_MHORGORM,
 ]
 
 class CabinCategory(IntEnum):
@@ -227,13 +308,15 @@ class PeakRegion(PoYRegion):
 
 
 class PoYRegions:
+    handler: IDHandler
+
     gales_cabin: CabinRegion
     northern_cabin: CabinRegion
     alps_cabin: CabinRegion
 
-    gales_peaks: list[PeakRegion] = []
-    northern_peaks: list[PeakRegion] = []
-    alps_peaks: list[PeakRegion] = []
+    gales_peaks: dict[PeakNames, PeakRegion]
+    northern_peaks: dict[PeakNames, PeakRegion]
+    alps_peaks: dict[PeakNames, PeakRegion]
 
     def __init__(self, handler: IDHandler) -> None:
         """
@@ -242,65 +325,61 @@ class PoYRegions:
         :param handler: The ID handler for assigning IDs to regions
         """
 
+        self.handler = handler
+
         self.gales_cabin = CabinRegion(
-            handler.new_id(), "Great Gales Cabin", CabinCategory.Gales
+            handler.new_id(), PeakNames.CABIN_GALES.value, CabinCategory.Gales
         )
         self.northern_cabin = CabinRegion(
-            handler.new_id(), "Northern Cabin", CabinCategory.Northern
+            handler.new_id(), PeakNames.CABIN_NORTHERN.value, CabinCategory.Northern
         )
         self.alps_cabin = CabinRegion(
-            handler.new_id(), "Alps Cabin", CabinCategory.Alps
+            handler.new_id(), PeakNames.CABIN_ALPS.value, CabinCategory.Alps
         )
 
         # Great Gales
-        gales_fundamental_peaks = [
-            PeakRegion(handler.new_id(), name, PeakCategory.GalesFundamentals)
-            for peak in gales_fundamental_names
-        ]
+        gales_fundamental_peaks = self.create_category(PeakCategory.GalesFundamentals, gales_fundamentals)
+        gales_intermediate_peaks = self.create_category(PeakCategory.GalesIntermediate, gales_intermediate)
+        gales_advanced_peaks = self.create_category(PeakCategory.GalesAdvanced, gales_advanced)
 
-        gales_intermediate_peaks = [
-            PeakRegion(handler.new_id(), name, PeakCategory.GalesIntermediate)
-            for peak in gales_intermediate_names
-        ]
-
-        gales_advanced_peaks = [
-            PeakRegion(handler.new_id(), name, PeakCategory.GalesAdvanced)
-            for peak in gales_advanced_names
-        ]
-
-        self.gales_peaks = [
-            *gales_fundamental_peaks,
-            *gales_intermediate_peaks,
-            *gales_advanced_peaks,
-        ]
+        self.gales_peaks = {
+            **gales_fundamental_peaks,
+            **gales_intermediate_peaks,
+            **gales_advanced_peaks,
+        }
 
         # Northern Range
-        self.northern_peaks = [
-            PeakRegion(handler.new_id(), name, PeakCategory.NorthernExpert)
-            for peak in northern_expert_names
-        ]
+        self.northern_peaks = self.create_category(PeakCategory.NorthernExpert, northern_expert)
 
         # Alps DLC
-        alps_essentials_peaks = [
-            PeakRegion(handler.new_id(), name, PeakCategory.AlpsEssentials)
-            for peak in alps_essentials_names
-        ]
-
-        alps_greats_peaks = [
-            PeakRegion(handler.new_id(), name, PeakCategory.AlpsGreats)
-            for peak in alps_greats_names
-        ]
-
-        alps_arctic_peaks = [
-            PeakRegion(handler.new_id(), name, PeakCategory.AlpsArctic)
-            for peak in alps_arctic_names
-        ]
+        alps_essentials_peaks = self.create_category(PeakCategory.AlpsEssentials, alps_essentials)
+        alps_great_peaks = self.create_category(PeakCategory.AlpsGreats, alps_greats)
+        alps_arctic_peaks = self.create_category(PeakCategory.AlpsArctic, alps_arctic)
 
         self.alps_peaks = [
-            *alps_essentials_peaks,
-            *alps_greats_peaks,
-            *alps_arctic_peaks,
+            **alps_essentials_peaks,
+            **alps_greats_peaks,
+            **alps_arctic_peaks,
         ]
+
+    def create_category(
+        self,
+        category: PeakCategory,
+        peaks: list[PeakNames]
+    ) -> dict[PeakNames, PeakRegion]:
+        """
+        Creates a dictionary mapping
+        peak names to regions for a given category.
+
+        :param handler: The handler used for assigning IDs
+        :param peaks: The peak names under a given category
+        :param category: The category these peaks are within
+        """
+
+        return dict([
+            (peak, PeakRegion(self.handler.new_id(), peak.value, category))
+            for peak in peaks
+        ])
 
     def create_conns() -> None:
         """
@@ -319,9 +398,9 @@ class PoYRegions:
         self.alps_cabin.link_to(self.gales_cabin)
 
         # Link cabins to peaks
-        self.create_peak_conns(self.gales_cabin, self.gales_peaks)
-        self.create_peak_conns(self.northern_cabin, self.northern_peaks)
-        self.create_peak_conns(self.alps_cabin, self.alps_peaks)
+        self.create_peak_conns(self.gales_cabin, list(self.gales_peaks.values))
+        self.create_peak_conns(self.northern_cabin, list(self.northern_peaks.values))
+        self.create_peak_conns(self.alps_cabin, list(self.alps_peaks))
 
     def create_peak_conns(
         cabin: CabinRegion,
