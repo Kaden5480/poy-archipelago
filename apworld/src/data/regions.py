@@ -12,8 +12,8 @@ from ..names.regions import RegionName, \
                             ArcticRegionName
 
 class RegionData:
-    id: int
-    name: str
+    __id: int
+    __name: str
 
     def __init__(self, id: int, name: str) -> None:
         """
@@ -23,14 +23,21 @@ class RegionData:
         :param name: The name of this region
         """
 
-        self.id = id
-        self.name = name
+        self.__id = id
+        self.__name = name
+
+    @property
+    def id(self) -> int:
+        return self.__id
+
+    @property
+    def name(self) -> str:
+        return self.__name
 
 
 class Regions:
-    handler: IDHandler
-
-    regions: dict[str, RegionData]
+    __handler: IDHandler
+    __regions: dict[str, RegionData]
 
     def __init__(self, handler: IDHandler) -> None:
         """
@@ -39,43 +46,8 @@ class Regions:
         :param handler: The handler to assign IDs with
         """
 
-        self.handler = handler
-        self.regions = {}
-
-        self.create_category(CabinRegionName)
-        self.create_category(FundamentalsRegionName)
-        self.create_category(IntermediateRegionName)
-        self.create_category(AdvancedRegionName)
-        self.create_category(ExpertRegionName)
-        self.create_category(EssentialsRegionName)
-        self.create_category(GreatsRegionName)
-        self.create_category(ArcticRegionName)
-
-    def create_data(
-        self,
-        region: RegionName
-    ) -> None:
-        """
-        Creates the data for a region.
-        """
-
-        self.regions[region] = RegionData(
-            self.handler.new_id(), region.value
-        )
-
-    def create_category(
-        self,
-        category: RegionName
-    ) -> None:
-        """
-        Creates region data for all regions
-        in a given category.
-
-        :param category: The category to create region data for
-        """
-
-        for region in category:
-            self.create_data(region)
+        self.__handler = handler
+        self.__regions = {}
 
     def get_data(
         self,
@@ -88,7 +60,7 @@ class Regions:
         :returns: The region's data
         """
 
-        return self.regions[region.value]
+        return self.__regions[region.value]
 
     def get_data_for_category(
         self,
@@ -102,3 +74,43 @@ class Regions:
         """
 
         return [self.get_data(region) for region in category]
+
+    def __create_data(
+        self,
+        region: RegionName
+    ) -> None:
+        """
+        Creates the data for a region.
+        """
+
+        self.__regions[region] = RegionData(
+            self.__handler.new_id(), region.value
+        )
+
+    def __create_category(
+        self,
+        category: RegionName
+    ) -> None:
+        """
+        Creates region data for all regions
+        in a given category.
+
+        :param category: The category to create region data for
+        """
+
+        for region in category:
+            self.__create_data(region)
+
+    def __create_all(self) -> None:
+        """
+        Creates all region data.
+        """
+
+        self.__create_category(CabinRegionName)
+        self.__create_category(FundamentalsRegionName)
+        self.__create_category(IntermediateRegionName)
+        self.__create_category(AdvancedRegionName)
+        self.__create_category(ExpertRegionName)
+        self.__create_category(EssentialsRegionName)
+        self.__create_category(GreatsRegionName)
+        self.__create_category(ArcticRegionName)
