@@ -146,8 +146,8 @@ class LocationSuffix(StrEnum):
     upon suffixes instead.
     """
 
-    STAMP_SUFFIX           = "Stamp"
-    STAMP_FREE_SOLO_SUFFIX = "Stamp (Free Solo)"
+    STAMP           = "Stamp"
+    STAMP_FREE_SOLO = "Stamp (Free Solo)"
 
 
 # Location names excluding suffixes
