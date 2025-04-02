@@ -157,12 +157,12 @@ class Items:
     def get_data(
         self,
         name: ItemName
-    ) -> ItemData | None:
+    ) -> ItemData:
         """
         Gets data for a given item name.
 
         :param name: The name of the item to get the data for
-        :returns: The item's data, or None if no data was found
+        :returns: The item's data
         """
 
-        return self.items.get(name.value, None)
+        return self.items.get[name.value]
