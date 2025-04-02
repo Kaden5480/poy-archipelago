@@ -1,6 +1,9 @@
+from BaseClasses import LocationProgressType
+
 from .id_handler import IDHandler
 
 from ..names.items import ItemName, \
+                          ItemSuffix, \
                           BaseItemName, \
                           DlcItemName
 
@@ -24,12 +27,14 @@ class LocationData:
     __id: int
     __name: str
     __item_name: str
+    __progress_type: LocationProgressType
 
     def __init__(
         self,
         id: int,
         name: str,
-        item_name: str
+        item_name: str,
+        progress_type: LocationProgressType
     ) -> None:
         """
         Initializes a LocationData object.
@@ -37,11 +42,13 @@ class LocationData:
         :param id: The ID of this location
         :param name: The name of this location
         :param item_name: The item locked behind this location (or dropped by it)
+        :param progress_type: The progress type for this location
         """
 
         self.__id = id
         self.__name = name
         self.__item_name = item_name
+        self.__progress_type = progress_type
 
     @property
     def id(self) -> int:
@@ -54,6 +61,10 @@ class LocationData:
     @property
     def item_name(self) -> str:
         return self.__item_name
+
+    @property
+    def progress_type(self) -> LocationProgressType:
+        return self.__progress_type
 
 
 class Locations:
@@ -74,6 +85,14 @@ class Locations:
 
         self.__create_all()
 
+    @property
+    def count() -> int:
+        """
+        The number of locations stored.
+        """
+
+        return len(self.__locations)
+
     def get_data(
         self,
         name: LocationName
@@ -89,15 +108,15 @@ class Locations:
 
     def get_data_suffix(
         self,
-        region: RegionName,
-        suffix: LocationSuffix
+        suffix: LocationSuffix,
+        region: RegionName
     ) -> LocationData | None:
         """
         Gets data for a location by a given region
         and location suffix.
 
-        :param region: The region the location is within
         :param suffix: The suffix of the location
+        :param region: The region the location is within
         :returns: The data for this location or None if not found
         """
 
@@ -122,61 +141,127 @@ class Locations:
             region.value, []
         )
 
-    def __create_data(
+    def get_stamps(
         self,
-        name: LocationName | LocationSuffix,
-        region: RegionName,
-        item_name: ItemName
+        category: PeakName
+    ) -> list[LocationData]:
+        """
+        Gets data for all stamps in a given category
+        of peaks.
+
+        :param category: The category of peaks to get stamps for
+        :returns: All stamps for this category
+        """
+
+        stamps = []
+
+        for region in category:
+            stamp = self.get_data_suffix(
+                LocationSuffix.STAMP,
+                region
+            )
+
+            if stamp is not None:
+                stamps.append(stamp)
+
+        return stamps
+
+    def __create_data_str(
+        self,
+        name: str,
+        region: str,
+        item_name: str,
+        progress_type: LocationProgressType
     ) -> None:
         """
-        Creates location data and stores it.
+        Creates location data using strings of names.
 
-        :param name: The name of the location, or its suffix
-        :param region_name: The region this location is for
-        :param item_name: The item locked behind this location
+        NOTE: This method should not be accessed directly in
+        __create_all.
+        It should be accessed through methods like __create_data
+        or __create_data_suffix.
+
+        :param name: The name of this location
+        :param region: The region name this location is found within
+        :param item_name: The name of the item found at this location
+        :param progress_type: The progress type for this location
         """
-
-        region_name = region.value
-
-        # By default, just use the name of the location
-        data_name = name.value
-
-        # If a suffix is provided, append the suffix
-        # to the name of the region
-        if type(name) == LocationSuffix:
-            data_name = f"{region_name.value} {name.value}"
 
         # Create the data
         data = LocationData(
-            self.__handler.new_id(), data_name, item_name.value
+            self.__handler.new_id(), name,
+            item_name, progress_type
         )
 
         # If this region has no list of locations yet,
         # create an empty list for it
-        if region_name not in self.__region_to_locations:
-            self.__region_to_locations[region_name] = []
+        if region not in self.__region_to_locations:
+            self.__region_to_locations[region] = []
 
         # Store the location data
-        self.__region_to_locations[region_name].append(data)
-        self.__locations[data_name] = data
+        self.__region_to_locations[region].append(data)
+        self.__locations[name] = data
+
+    def __create_data(
+        self,
+        name: LocationName,
+        region: RegionName,
+        item_name: ItemName,
+        progress_type: LocationProgressType = LocationProgressType.DEFAULT
+    ) -> None:
+        """
+        Creates location data and stores it.
+
+        :param name: The name of the location
+        :param region_name: The region this location is for
+        :param item_name: The item locked behind this location
+        :param progress_type: The progress type for this location
+        """
+
+        self.__create_data_str(
+            name.value, region.value,
+            item_name.value
+        )
+
+    def __create_data_suffix(
+        self,
+        suffix: LocationSuffix,
+        region: RegionName,
+        item_suffix: ItemSuffix,
+        progress_type: LocationProgressType = LocationProgressType.DEFAULT
+    ) -> None:
+        """
+        Creates location data for a region
+        with a given suffix
+
+        :param suffix: The suffix of the location
+        :param region: The region this location is found within
+        :param item_suffix: The suffix of the item found at this location
+        :param progress_type: The progress type for this location
+        """
+
+        self.__create_data_str(
+            f"{region.value} {suffix.value}",
+            region.value,
+            f"{region.value} {item_suffix.value}"
+        )
 
     def __create_stamps(
         self,
-        category: PeakName,
-        stamp: ItemName
+        category: PeakName
     ) -> None:
         """
-        Creates the stamp locations for all
-        peaks in a given category.
+        Creates all stamps for a given category of peaks.
 
-        :param category: The peaks in the category
-        :param stamp: The type of stamp for this category
+        :param category: The category to create stamps for
         """
 
         for region in category:
-            self.__create_data(
+            self.__create_data_suffix(
                 LocationSuffix.STAMP,
-                region, stamp
+                region,
+                ItemSuffix.STAMP,
+                LocationProgressType.PRIORITY
             )
 
     def __create_all(self) -> None:
@@ -189,86 +274,102 @@ class Locations:
         self.__create_data(
             BaseLocationName.HAT_OLD_MILL,
             FundamentalsRegionName.OLD_MILL,
-            BaseItemName.HAT_1
+            BaseItemName.HAT_1,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.HAT_EVERGREENS_END,
             FundamentalsRegionName.EVERGREENS_END,
-            BaseItemName.HAT_2
+            BaseItemName.HAT_2,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.SHOE_OLD_MAN_OF_SJOR,
             FundamentalsRegionName.OLD_MAN_OF_SJOR,
-            BaseItemName.SHOE
+            BaseItemName.SHOE,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.SLEEPING_BAG_GIANTS_SHELF,
             FundamentalsRegionName.GIANTS_SHELF,
-            BaseItemName.SLEEPING_BAG
+            BaseItemName.SLEEPING_BAG,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.SAFETY_HELMET_OLD_GROVES_SKELF,
             FundamentalsRegionName.OLD_GROVES_SKELF,
-            BaseItemName.SAFETY_HELMET
+            BaseItemName.SAFETY_HELMET,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.BACKPACK_ALDR_GROTTO,
             FundamentalsRegionName.ALDR_GROTTO,
-            BaseItemName.BACKPACK
+            BaseItemName.BACKPACK,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.SHOVEL_THREE_BROTHERS,
             FundamentalsRegionName.THREE_BROTHERS,
-            BaseItemName.SHOVEL
+            BaseItemName.SHOVEL,
+            LocationProgressType.PRIORITY
         )
 
         # The picture pieces
         self.__create_data(
             BaseLocationName.PICTURE_GRAY_GULLY,
             FundamentalsRegionName.GRAY_GULLY,
-            BaseItemName.PICTURE_FRAGMENT
+            BaseItemName.PICTURE_FRAGMENT,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.PICTURE_LANDS_END,
             FundamentalsRegionName.LANDS_END,
-            BaseItemName.PICTURE_FRAGMENT
+            BaseItemName.PICTURE_FRAGMENT,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.PICTURE_THE_GREAT_CREVICE,
             FundamentalsRegionName.THE_GREAT_CREVICE,
-            BaseItemName.PICTURE_FRAGMENT
+            BaseItemName.PICTURE_FRAGMENT,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.PICTURE_ST_HAELGA,
             AdvancedRegionName.ST_HAELGA,
-            BaseItemName.PICTURE_FRAGMENT
+            BaseItemName.PICTURE_FRAGMENT,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.PICTURE_FRAME_GREAT_GAOL,
             AdvancedRegionName.GREAT_GAOL,
-            BaseItemName.PICTURE_FRAME
+            BaseItemName.PICTURE_FRAME,
+            LocationProgressType.PRIORITY
         )
 
         # Statues
         self.__create_data(
             BaseLocationName.STATUE_FUNDAMENTALS_WALTERS_CRAG,
             FundamentalsRegionName.WALTERS_CRAG,
-            BaseItemName.STATUE_FUNDAMENTALS
+            BaseItemName.STATUE_FUNDAMENTALS,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.STATUE_INTERMEDIATE_LEANING_SPIRE,
             IntermediateRegionName.LEANING_SPIRE,
-            BaseItemName.STATUE_INTERMEDIATE
+            BaseItemName.STATUE_INTERMEDIATE,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.STATUE_ADVANCED_YMIRS_SHADOW,
             AdvancedRegionName.YMIRS_SHADOW,
-            BaseItemName.STATUE_ADVANCED
+            BaseItemName.STATUE_ADVANCED,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.STATUE_EXPERT_BULWARK,
             ExpertRegionName.GREAT_BULWARK,
-            BaseItemName.STATUE_EXPERT
+            BaseItemName.STATUE_EXPERT,
+            LocationProgressType.PRIORITY
         )
 
         # Bird seeds
@@ -302,24 +403,28 @@ class Locations:
         self.__create_data(
             BaseLocationName.CHALK_WALKERS_PILLAR,
             AdvancedRegionName.WALKERS_PILLAR,
-            BaseItemName.CHALK
+            BaseItemName.CHALK,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.CHALK_ELDENHORN,
             AdvancedRegionName.ELDENHORN,
-            BaseItemName.CHALK
+            BaseItemName.CHALK,
+            LocationProgressType.PRIORITY
         )
 
         # Coffee
         self.__create_data(
             BaseLocationName.COFFEE_OLD_LANGR,
             FundamentalsRegionName.OLD_LANGR,
-            BaseItemName.COFFEE_2
+            BaseItemName.COFFEE_2,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.COFFEE_WUTHERING_CREST,
             FundamentalsRegionName.WUTHERING_CREST,
-            BaseItemName.COFFEE_2
+            BaseItemName.COFFEE_2,
+            LocationProgressType.PRIORITY
         )
 
         # Rope
@@ -388,32 +493,38 @@ class Locations:
         self.__create_data(
             BaseLocationName.NPC_COFFEE_THE_TWINS,
             FundamentalsRegionName.THE_TWINS,
-            BaseItemName.COFFEE_5
+            BaseItemName.COFFEE_5,
+            LocationProgressType.EXCLUDED
         )
         self.__create_data(
             BaseLocationName.NPC_COFFEE_GIANTS_NOSE,
             IntermediateRegionName.GIANTS_NOSE,
-            BaseItemName.COFFEE_5
+            BaseItemName.COFFEE_5,
+            LocationProgressType.EXCLUDED
         )
         self.__create_data(
             BaseLocationName.NPC_ROPE_WALTERS_CRAG,
             FundamentalsRegionName.WALTERS_CRAG,
-            BaseItemName.ROPES_1
+            BaseItemName.ROPES_1,
+            LocationProgressType.EXCLUDED
         )
         self.__create_data(
             BaseLocationName.NPC_ROPE_WALKERS_PILLAR,
             AdvancedRegionName.WALKERS_PILLAR,
-            BaseItemName.ROPES_1
+            BaseItemName.ROPES_1,
+            LocationProgressType.EXCLUDED
         )
         self.__create_data(
             BaseLocationName.NPC_ROPE_GREAT_GAOL,
             AdvancedRegionName.GREAT_GAOL,
-            BaseItemName.ROPES_1
+            BaseItemName.ROPES_1,
+            LocationProgressType.EXCLUDED
         )
         self.__create_data(
             BaseLocationName.NPC_ROPE_ST_HAELGA,
             AdvancedRegionName.ST_HAELGA,
-            BaseItemName.ROPES_1
+            BaseItemName.ROPES_1,
+            LocationProgressType.EXCLUDED
         )
 
         # Tools
@@ -423,12 +534,14 @@ class Locations:
         self.__create_data(
             BaseLocationName.TOOL_ARTEFACT_MAP,
             FundamentalsRegionName.CATEGORY,
-            BaseItemName.TOOL_ARTEFACT_MAP
+            BaseItemName.TOOL_ARTEFACT_MAP,
+            LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.TOOL_BAROMETER,
             FundamentalsRegionName.CATEGORY,
-            BaseItemName.TOOL_BAROMETER
+            BaseItemName.TOOL_BAROMETER,
+            LocationProgressType.PRIORITY
         )
 
         # The rules for unlocking chalk involve checks
@@ -437,7 +550,8 @@ class Locations:
         self.__create_data(
             BaseLocationName.TOOL_CHALK_BAG,
             CabinRegionName.GALES,
-            BaseItemName.TOOL_CHALK_BAG
+            BaseItemName.TOOL_CHALK_BAG,
+            LocationProgressType.PRIORITY
         )
 
         # The coffee is locked behind fundamentals
@@ -446,7 +560,8 @@ class Locations:
         self.__create_data(
             BaseLocationName.TOOL_COFFEE,
             FundamentalsRegionName.CATEGORY,
-            BaseItemName.TOOL_COFFEE
+            BaseItemName.TOOL_COFFEE,
+            LocationProgressType.PRIORITY
         )
 
         # Crampons are locked behind Old Grove's Skelf
@@ -459,7 +574,8 @@ class Locations:
         self.__create_data(
             BaseLocationName.TOOL_CRAMPONS_6,
             CabinRegionName.GALES,
-            BaseItemName.TOOL_CRAMPONS_6
+            BaseItemName.TOOL_CRAMPONS_6,
+            LocationProgressType.PRIORITY
         )
 
         # 10 point crampons require at least 3 advanced peaks
@@ -468,21 +584,24 @@ class Locations:
         self.__create_data(
             BaseLocationName.TOOL_CRAMPONS_10,
             AdvancedRegionName.CATEGORY,
-            BaseItemName.TOOL_CRAMPONS_10
+            BaseItemName.TOOL_CRAMPONS_10,
+            LocationProgressType.PRIORITY
         )
 
         # Ice axes are locked behind 3 advanced OR ymir's shadow
         self.__create_data(
             BaseLocationName.TOOL_ICE_AXES,
             AdvancedRegionName.CATEGORY,
-            BaseItemName.TOOL_ICE_AXES
+            BaseItemName.TOOL_ICE_AXES,
+            LocationProgressType.PRIORITY
         )
 
         # Monocular locked behind three brothers
         self.__create_data(
             BaseLocationName.TOOL_MONOCULAR,
             FundamentalsRegionName.THREE_BROTHERS,
-            BaseItemName.TOOL_MONOCULAR
+            BaseItemName.TOOL_MONOCULAR,
+            LocationProgressType.PRIORITY
         )
 
         # Phonograph is locked behind either completing
@@ -490,7 +609,8 @@ class Locations:
         self.__create_data(
             BaseLocationName.TOOL_PHONOGRAPH,
             FundamentalsRegionName.CATEGORY,
-            BaseItemName.TOOL_PHONOGRAPH
+            BaseItemName.TOOL_PHONOGRAPH,
+            LocationProgressType.PRIORITY
         )
 
         # Need to beat all intermediate time trials
@@ -498,7 +618,8 @@ class Locations:
         self.__create_data(
             BaseLocationName.TOOL_PIPE,
             IntermediateRegionName.CATEGORY,
-            BaseItemName.TOOL_PIPE
+            BaseItemName.TOOL_PIPE,
+            LocationProgressType.PRIORITY
         )
 
         # Pocketwatch is given after completing at least 2
@@ -507,6 +628,7 @@ class Locations:
             BaseLocationName.TOOL_POCKETWATCH
             IntermediateRegionName.CATEGORY,
             BaseItemName.TOOL_POCKETWATCH
+            LocationProgressType.PRIORITY
         )
 
         # Rope is given after gray gully, or completing
@@ -514,7 +636,8 @@ class Locations:
         self.__create_data(
             BaseLocationName.TOOL_ROPE,
             FundamentalsRegionName.CATEGORY,
-            BaseItemName.TOOL_ROPE
+            BaseItemName.TOOL_ROPE,
+            LocationProgressType.PRIORITY
         )
 
         # Double length rope is given after
@@ -523,7 +646,8 @@ class Locations:
         self.__create_data(
             BaseLocationName.TOOL_ROPE_DOUBLE,
             AdvancedRegionName.CATEGORY,
-            BaseItemName.TOOL_ROPE_DOUBLE
+            BaseItemName.TOOL_ROPE_DOUBLE,
+            LocationProgressType.PRIORITY
         )
 
         ## DLC
@@ -709,7 +833,8 @@ class Locations:
         self.__create_data(
             PoYLocationData.TICKET_NORTHERN_RANGE,
             AdvancedRegionName.CATEGORY,
-            BaseItemName.TICKET_NORTHERN_RANGE
+            BaseItemName.TICKET_NORTHERN_RANGE,
+            LocationProgressType.PRIORITY
         )
 
         # Books
@@ -717,28 +842,32 @@ class Locations:
         self.__create_data(
             BaseLocationName.BOOK_FUNDAMENTALS,
             CabinRegionName.GALES,
-            BaseItemName.BOOK_FUNDAMENTALS
+            BaseItemName.BOOK_FUNDAMENTALS,
+            LocationProgressType.PRIORITY
         )
 
         # Intermediate book requires fundamentals access
         self.__create_data(
             BaseLocationName.BOOK_INTERMEDIATE,
             FundamentalsRegionName.CATEGORY,
-            BaseItemName.BOOK_INTERMEDIATE
+            BaseItemName.BOOK_INTERMEDIATE,
+            LocationProgressType.PRIORITY
         )
 
         # Advanced book requires intermediate access
         self.__create_data(
             BaseLocationName.BOOK_ADVANCED,
             IntermediateRegionName.CATEGORY,
-            BaseItemName.BOOK_ADVANCED
+            BaseItemName.BOOK_ADVANCED,
+            LocationProgressType.PRIORITY
         )
 
         # Expert book requires advanced access
         self.__create_data(
             BaseLocationName.BOOK_NORTHERN_EXPERT,
             AdvancedRegionName.CATEGORY,
-            BaseItemName.BOOK_NORTHERN_EXPERT
+            BaseItemName.BOOK_NORTHERN_EXPERT,
+            LocationProgressType.PRIORITY
         )
 
         # DLC books
@@ -747,28 +876,31 @@ class Locations:
         self.__create_data(
             DlcLocationName.BOOK_ALPS_ESSENTIALS,
             CabinRegionName.ALPS,
-            DlcItemName.BOOK_ALPS_ESSENTIALS
+            DlcItemName.BOOK_ALPS_ESSENTIALS,
+            LocationProgressType.PRIORITY
         )
 
         # Alpine greats requires access to the essentials
         self.__create_data(
             DlcLocationName.BOOK_ALPS_GREATS,
             EssentialsRegionName.CATEGORY,
-            DlcItemName.BOOK_ALPS_GREATS
+            DlcItemName.BOOK_ALPS_GREATS,
+            LocationProgressType.PRIORITY
         )
 
         # Arduous and arctic requires access to the alpine greats
         self.__create_data(
             DlcLocationName.BOOK_ALPS_ARCTIC,
             GreatsRegionName.CATEGORY,
-            DlcItemName.BOOK_ALPS_ARCTIC
+            DlcItemName.BOOK_ALPS_ARCTIC,
+            LocationProgressType.PRIORITY
         )
 
         # Create stamp locations for all peaks in each category
-        self.__create_stamps(FundamentalsRegionName, BaseItemName.STAMP_FUNDAMENTALS)
-        self.__create_stamps(IntermediateRegionName, BaseItemName.STAMP_INTERMEDIATE)
-        self.__create_stamps(AdvancedRegionName,     BaseItemName.STAMP_ADVANCED)
-        self.__create_stamps(ExpertRegionName,       BaseItemName.STAMP_NORTHERN_EXPERT)
-        self.__create_stamps(EssentialsRegionName,   DlcItemName.STAMP_ALPS_ESSENTIALS)
-        self.__create_stamps(GreatsRegionName,       DlcItemName.STAMP_ALPS_GREATS)
-        self.__create_stamps(ArcticRegionName,       DlcItemName.STAMP_ALPS_ARCTIC)
+        self.__create_stamps(FundamentalsRegionName)
+        self.__create_stamps(IntermediateRegionName)
+        self.__create_stamps(AdvancedRegionName)
+        self.__create_stamps(ExpertRegionName)
+        self.__create_stamps(EssentialsRegionName)
+        self.__create_stamps(GreatsRegionName)
+        self.__create_stamps(ArcticRegionName)
