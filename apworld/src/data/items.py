@@ -206,6 +206,10 @@ class Items:
         """
 
         for region in category:
+            # The category regions don't need stamps though
+            if region.name == "CATEGORY":
+                continue
+
             self.__create_data_suffix(
                 ItemSuffix.STAMP, region,
                 ItemClassification.progression

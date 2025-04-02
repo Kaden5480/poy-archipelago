@@ -265,6 +265,10 @@ class Locations:
         """
 
         for region in category:
+            # The category regions don't need stamps though
+            if region.name == "CATEGORY":
+                continue
+
             self.__create_data_suffix(
                 LocationSuffix.STAMP,
                 region,
