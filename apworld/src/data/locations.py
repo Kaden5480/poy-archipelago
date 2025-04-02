@@ -1,22 +1,40 @@
 from enum import StrEnum
 
 from .id_handler import IDHandler
-from .items import PoYItemName
-from .regions import PoYRegionName, \
 
-class PoYLocationData:
+from ..names.items import ItemName, \
+                          BaseItemName, \
+                          DlcItemName
+
+from ..names.locations import LocationName, \
+                              BaseLocationName, \
+                              DlcLocationName, \
+                              LocationSuffix
+
+from ..names.regions import RegionName, \
+                            CabinRegionName, \
+                            PeakName, \
+                            FundamentalsRegionName, \
+                            IntermediateRegionName, \
+                            AdvancedRegionName, \
+                            ExpertRegionName, \
+                            EssentialsRegionName, \
+                            GreatsRegionName, \
+                            ArcticRegionName
+
+class LocationData:
     id: int
-    name: PoYLocationName
-    item_name: PoYItemName
+    name: str
+    item_name: str
 
     def __init__(
         self,
         id: int,
-        name: PoYLocationName,
-        item_name: PoYItemName
+        name: str,
+        item_name: str
     ) -> None:
         """
-        Initializes a PoYLocationData object.
+        Initializes a LocationData object.
 
         :param id: The ID of this location
         :param name: The name of this location
@@ -28,10 +46,11 @@ class PoYLocationData:
         self.item_name = item_name
 
 
-class PoYLocations:
+class Locations:
     handler: IDHandler
 
-    locations: dict[PoYRegionName, list[PoYLocationData]]
+    region_to_locations: dict[str, list[LocationData]]
+    locations: dict[str, LocationData]
 
     def __init__(self, handler: IDHandler) -> None:
         """
@@ -44,554 +63,635 @@ class PoYLocations:
 
         ## Base game
         # Artefacts
-        self.create_location(
-            PoYLocationName.HAT_OLD_MILL,
-            PoYRegionName.GALES_OLD_MILL,
-            PoYItemName.HAT_1
+        self.create_data(
+            BaseLocationName.HAT_OLD_MILL,
+            FundamentalsRegionName.OLD_MILL,
+            BaseItemName.HAT_1
         )
-        self.create_location(
-            PoYLocationName.HAT_EVERGREENS_END,
-            PoYRegionName.GALES_EVERGREENS_END,
-            PoYItemName.HAT_2
+        self.create_data(
+            BaseLocationName.HAT_EVERGREENS_END,
+            FundamentalsRegionName.EVERGREENS_END,
+            BaseItemName.HAT_2
         )
-        self.create_location(
-            PoYLocationName.SHOE_OLD_MAN_OF_SJOR,
-            PoYRegionName.GALES_OLD_MAN_OF_SJOR,
-            PoYItemName.SHOE
+        self.create_data(
+            BaseLocationName.SHOE_OLD_MAN_OF_SJOR,
+            FundamentalsRegionName.OLD_MAN_OF_SJOR,
+            BaseItemName.SHOE
         )
-        self.create_location(
-            PoYLocationName.SLEEPING_BAG_GIANTS_SHELF,
-            PoYRegionName.GALES_GIANTS_SHELF,
-            PoYItemName.SLEEPING_BAG
+        self.create_data(
+            BaseLocationName.SLEEPING_BAG_GIANTS_SHELF,
+            FundamentalsRegionName.GIANTS_SHELF,
+            BaseItemName.SLEEPING_BAG
         )
-        self.create_location(
-            PoYLocationName.SAFETY_HELMET_OLD_GROVES_SKELF,
-            PoYRegionName.GALES_OLD_GROVES_SKELF,
-            PoYItemName.SAFETY_HELMET
+        self.create_data(
+            BaseLocationName.SAFETY_HELMET_OLD_GROVES_SKELF,
+            FundamentalsRegionName.OLD_GROVES_SKELF,
+            BaseItemName.SAFETY_HELMET
         )
-        self.create_location(
-            PoYLocationName.BACKPACK_ALDR_GROTTO,
-            PoYRegionName.GALES_ALDR_GROTTO,
-            PoYItemName.BACKPACK
+        self.create_data(
+            BaseLocationName.BACKPACK_ALDR_GROTTO,
+            FundamentalsRegionName.ALDR_GROTTO,
+            BaseItemName.BACKPACK
         )
-        self.create_location(
-            PoYLocationName.SHOVEL_THREE_BROTHERS,
-            PoYRegionName.GALES_THREE_BROTHERS,
-            PoYItemName.SHOVEL
+        self.create_data(
+            BaseLocationName.SHOVEL_THREE_BROTHERS,
+            FundamentalsRegionName.THREE_BROTHERS,
+            BaseItemName.SHOVEL
         )
-        self.create_location(
-            PoYLocationName.PICTURE_GRAY_GULLY,
-            PoYRegionName.GALES_GRAY_GULLY,
-            PoYItemName.PICTURE_FRAGMENT
+
+        # The picture pieces
+        self.create_data(
+            BaseLocationName.PICTURE_GRAY_GULLY,
+            FundamentalsRegionName.GRAY_GULLY,
+            BaseItemName.PICTURE_FRAGMENT
         )
-        self.create_location(
-            PoYLocationName.PICTURE_LANDS_END,
-            PoYRegionName.GALES_LANDS_END,
-            PoYItemName.PICTURE_FRAGMENT
+        self.create_data(
+            BaseLocationName.PICTURE_LANDS_END,
+            FundamentalsRegionName.LANDS_END,
+            BaseItemName.PICTURE_FRAGMENT
         )
-        self.create_location(
-            PoYLocationName.PICTURE_THE_GREAT_CREVICE,
-            PoYRegionName.GALES_THE_GREAT_CREVICE,
-            PoYItemName.PICTURE_FRAGMENT
+        self.create_data(
+            BaseLocationName.PICTURE_THE_GREAT_CREVICE,
+            FundamentalsRegionName.THE_GREAT_CREVICE,
+            BaseItemName.PICTURE_FRAGMENT
         )
-        self.create_location(
-            PoYLocationName.PICTURE_ST_HAELGA,
-            PoYRegionName.GALES_ST_HAELGA,
-            PoYItemName.PICTURE_FRAGMENT
+        self.create_data(
+            BaseLocationName.PICTURE_ST_HAELGA,
+            AdvancedRegionName.ST_HAELGA,
+            BaseItemName.PICTURE_FRAGMENT
         )
-        self.create_location(
-            PoYLocationName.PICTURE_FRAME_GREAT_GAOL,
-            PoYRegionName.GALES_GREAT_GAOL,
-            PoYItemName.PICTURE_FRAME
+        self.create_data(
+            BaseLocationName.PICTURE_FRAME_GREAT_GAOL,
+            AdvancedRegionName.GREAT_GAOL,
+            BaseItemName.PICTURE_FRAME
         )
-        self.create_location(
-            PoYLocationName.STATUE_FUNDAMENTALS_WALTERS_CRAG,
-            PoYRegionName.GALES_WALTERS_CRAG,
-            PoYItemName.STATUE_FUNDAMENTALS
+
+        # Statues
+        self.create_data(
+            BaseLocationName.STATUE_FUNDAMENTALS_WALTERS_CRAG,
+            FundamentalsRegionName.WALTERS_CRAG,
+            BaseItemName.STATUE_FUNDAMENTALS
         )
-        self.create_location(
-            PoYLocationName.STATUE_INTERMEDIATE_LEANING_SPIRE,
-            PoYRegionName.GALES_LEANING_SPIRE,
-            PoYItemName.STATUE_INTERMEDIATE
+        self.create_data(
+            BaseLocationName.STATUE_INTERMEDIATE_LEANING_SPIRE,
+            IntermediateRegionName.LEANING_SPIRE,
+            BaseItemName.STATUE_INTERMEDIATE
         )
-        self.create_location(
-            PoYLocationName.STATUE_ADVANCED_YMIRS_SHADOW,
-            PoYRegionName.GALES_YMIRS_SHADOW,
-            PoYItemName.STATUE_ADVANCED
+        self.create_data(
+            BaseLocationName.STATUE_ADVANCED_YMIRS_SHADOW,
+            AdvancedRegionName.YMIRS_SHADOW,
+            BaseItemName.STATUE_ADVANCED
         )
-        self.create_location(
-            PoYLocationName.STATUE_EXPERT_BULWARK,
-            PoYRegionName.NORTHERN_GREAT_BULWARK,
-            PoYItemName.STATUE_EXPERT
+        self.create_data(
+            BaseLocationName.STATUE_EXPERT_BULWARK,
+            ExpertRegionName.GREAT_BULWARK,
+            BaseItemName.STATUE_EXPERT
         )
 
         # Bird seeds
-        self.create_location(
-            PoYLocationName.BIRD_SEEDS_THREE_BROTHERS,
-            PoYRegionName.GALES_THREE_BROTHERS,
-            PoYItemName.BIRD_SEEDS
+        self.create_data(
+            BaseLocationName.BIRD_SEEDS_THREE_BROTHERS,
+            FundamentalsRegionName.THREE_BROTHERS,
+            BaseItemName.BIRD_SEEDS
         )
-        self.create_location(
-            PoYLocationName.BIRD_SEEDS_OLD_SKERRY,
-            PoYRegionName.GALES_OLD_SKERRY,
-            PoYItemName.BIRD_SEEDS
+        self.create_data(
+            BaseLocationName.BIRD_SEEDS_OLD_SKERRY,
+            IntermediateRegionName.OLD_SKERRY,
+            BaseItemName.BIRD_SEEDS
         )
-        self.create_location(
-            PoYLocationName.BIRD_SEEDS_GREAT_GAOL,
-            PoYRegionName.GALES_GREAT_GAOL,
-            PoYItemName.BIRD_SEEDS
+        self.create_data(
+            BaseLocationName.BIRD_SEEDS_GREAT_GAOL,
+            AdvancedRegionName.GREAT_GAOL,
+            BaseItemName.BIRD_SEEDS
         )
-        self.create_location(
-            PoYLocationName.BIRD_SEEDS_ELDENHORN,
-            PoYRegionName.GALES_ELDENHORN,
-            PoYItemName.BIRD_SEEDS
+        self.create_data(
+            BaseLocationName.BIRD_SEEDS_ELDENHORN,
+            AdvancedRegionName.ELDENHORN,
+            BaseItemName.BIRD_SEEDS
         )
-        self.create_location(
-            PoYLocationName.BIRD_SEEDS_YMIRS_SHADOW,
-            PoYRegionName.GALES_YMIRS_SHADOW,
-            PoYItemName.BIRD_SEEDS
+        self.create_data(
+            BaseLocationName.BIRD_SEEDS_YMIRS_SHADOW,
+            AdvancedRegionName.YMIRS_SHADOW,
+            BaseItemName.BIRD_SEEDS
         )
 
         # Chalk
-        self.create_location(
-            PoYLocationName.CHALK_WALKERS_PILLAR,
-            PoYRegionName.GALES_WALKERS_PILLAR,
-            PoYItemName.CHALK
+        self.create_data(
+            BaseLocationName.CHALK_WALKERS_PILLAR,
+            AdvancedRegionName.WALKERS_PILLAR,
+            BaseItemName.CHALK
         )
-        self.create_location(
-            PoYLocationName.CHALK_ELDENHORN,
-            PoYRegionName.GALES_ELDENHORN,
-            PoYItemName.CHALK
+        self.create_data(
+            BaseLocationName.CHALK_ELDENHORN,
+            AdvancedRegionName.ELDENHORN,
+            BaseItemName.CHALK
         )
 
         # Coffee
-        self.create_location(
-            PoYLocationName.COFFEE_OLD_LANGR,
-            PoYRegionName.GALES_OLD_LANGR,
-            PoYItemName.COFFEE_2
+        self.create_data(
+            BaseLocationName.COFFEE_OLD_LANGR,
+            FundamentalsRegionName.OLD_LANGR,
+            BaseItemName.COFFEE_2
         )
-        self.create_location(
-            PoYLocationName.COFFEE_WUTHERING_CREST,
-            PoYRegionName.GALES_WUTHERING_CREST,
-            PoYItemName.COFFEE_2
+        self.create_data(
+            BaseLocationName.COFFEE_WUTHERING_CREST,
+            FundamentalsRegionName.WUTHERING_CREST,
+            BaseItemName.COFFEE_2
         )
 
         # Rope
-        self.create_location(
-            PoYLocationName.ROPE_OLD_MAN_OF_SJOR,
-            PoYRegionName.GALES_OLD_MAN_OF_SJOR,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_OLD_MAN_OF_SJOR,
+            FundamentalsRegionName.OLD_MAN_OF_SJOR,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_EVERGREENS_END,
-            PoYRegionName.GALES_EVERGREENS_END,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_EVERGREENS_END,
+            FundamentalsRegionName.EVERGREENS_END,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_HANGMANS_LEAP,
-            PoYRegionName.GALES_HANGMANS_LEAP,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_HANGMANS_LEAP,
+            FundamentalsRegionName.HANGMANS_LEAP,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_LANDS_END,
-            PoYRegionName.GALES_LANDS_END,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_LANDS_END,
+            FundamentalsRegionName.LANDS_END,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_WALTERS_CRAG,
-            PoYRegionName.GALES_WALTERS_CRAG,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_WALTERS_CRAG,
+            FundamentalsRegionName.WALTERS_CRAG,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_THE_GREAT_CREVICE,
-            PoYRegionName.GALES_THE_GREAT_CREVICE,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_THE_GREAT_CREVICE,
+            FundamentalsRegionName.THE_GREAT_CREVICE,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_OLD_HAGGER,
-            PoYRegionName.GALES_OLD_HAGGER,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_OLD_HAGGER,
+            FundamentalsRegionName.OLD_HAGGER,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_UGSOME_STORR,
-            PoYRegionName.GALES_UGSOME_STORR,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_UGSOME_STORR,
+            FundamentalsRegionName.UGSOME_STORR,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_WUTHERING_CREST,
-            PoYRegionName.GALES_WUTHERING_CREST,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_WUTHERING_CREST,
+            FundamentalsRegionName.WUTHERING_CREST,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_GREAT_GAOL,
-            PoYRegionName.GALES_GREAT_GAOL,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_GREAT_GAOL,
+            AdvancedRegionName.GREAT_GAOL,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_ELDENHORN,
-            PoYRegionName.GALES_ELDENHORN,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_ELDENHORN,
+            AdvancedRegionName.ELDENHORN,
+            BaseItemName.ROPES_2
         )
-        self.create_location(
-            PoYLocationName.ROPE_YMIRS_SHADOW,
-            PoYRegionName.GALES_YMIRS_SHADOW,
-            PoYItemName.ROPES_2
+        self.create_data(
+            BaseLocationName.ROPE_YMIRS_SHADOW,
+            AdvancedRegionName.YMIRS_SHADOW,
+            BaseItemName.ROPES_2
         )
 
         # NPC events
-        self.create_location(
-            PoYLocationName.NPC_COFFEE_THE_TWINS,
-            PoYRegionName.GALES_THE_TWINS,
-            PoYItemName.COFFEE_5
+        self.create_data(
+            BaseLocationName.NPC_COFFEE_THE_TWINS,
+            FundamentalsRegionName.THE_TWINS,
+            BaseItemName.COFFEE_5
         )
-        self.create_location(
-            PoYLocationName.NPC_COFFEE_GIANTS_NOSE,
-            PoYRegionName.GALES_GIANTS_NOSE,
-            PoYItemName.COFFEE_5
+        self.create_data(
+            BaseLocationName.NPC_COFFEE_GIANTS_NOSE,
+            IntermediateRegionName.GIANTS_NOSE,
+            BaseItemName.COFFEE_5
         )
-        self.create_location(
-            PoYLocationName.NPC_ROPE_WALTERS_CRAG,
-            PoYRegionName.GALES_WALTERS_CRAG,
-            PoYItemName.ROPES_1
+        self.create_data(
+            BaseLocationName.NPC_ROPE_WALTERS_CRAG,
+            FundamentalsRegionName.WALTERS_CRAG,
+            BaseItemName.ROPES_1
         )
-        self.create_location(
-            PoYLocationName.NPC_ROPE_WALKERS_PILLAR,
-            PoYRegionName.GALES_WALKERS_PILLAR,
-            PoYItemName.ROPES_1
+        self.create_data(
+            BaseLocationName.NPC_ROPE_WALKERS_PILLAR,
+            AdvancedRegionName.WALKERS_PILLAR,
+            BaseItemName.ROPES_1
         )
-        self.create_location(
-            PoYLocationName.NPC_ROPE_GREAT_GAOL,
-            PoYRegionName.GALES_GREAT_GAOL,
-            PoYItemName.ROPES_1
+        self.create_data(
+            BaseLocationName.NPC_ROPE_GREAT_GAOL,
+            AdvancedRegionName.GREAT_GAOL,
+            BaseItemName.ROPES_1
         )
-        self.create_location(
-            PoYLocationName.NPC_ROPE_ST_HAELGA,
-            PoYRegionName.GALES_ST_HAELGA,
-            PoYItemName.ROPES_1
+        self.create_data(
+            BaseLocationName.NPC_ROPE_ST_HAELGA,
+            AdvancedRegionName.ST_HAELGA,
+            BaseItemName.ROPES_1
         )
 
         # Tools
-        self.create_location(
-            PoYLocationName.TOOL_ARTEFACT_MAP,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_ARTEFACT_MAP
+
+        # The artefact map and barometer are locked behind
+        # 5 fundamentals AND any items in the fundamentals
+        self.create_data(
+            BaseLocationName.TOOL_ARTEFACT_MAP,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.TOOL_ARTEFACT_MAP
         )
-        self.create_location(
-            PoYLocationName.TOOL_BAROMETER,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_BAROMETER
+        self.create_data(
+            BaseLocationName.TOOL_BAROMETER,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.TOOL_BAROMETER
         )
-        self.create_location(
-            PoYLocationName.TOOL_CHALK_BAG,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_CHALK_BAG
+
+        # The rules for unlocking chalk involve checks
+        # for advanced OR fundamental peaks, so set rules for
+        # this instead
+        self.create_data(
+            BaseLocationName.TOOL_CHALK_BAG,
+            CabinRegionName.GALES,
+            BaseItemName.TOOL_CHALK_BAG
         )
-        self.create_location(
-            PoYLocationName.TOOL_COFFEE,
-            PoYRegionName.GALES_THE_TWINS,
-            PoYItemName.TOOL_COFFEE
+
+        # The coffee is locked behind fundamentals
+        # but can be accessed by either completing the twins,
+        # OR picking up a coffee box
+        self.create_data(
+            BaseLocationName.TOOL_COFFEE,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.TOOL_COFFEE
         )
-        self.create_location(
-            PoYLocationName.TOOL_CRAMPONS_6,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_CRAMPONS_6
+
+        # Crampons are locked behind Old Grove's Skelf
+        # OR by completing any 10 base game peaks
+        #
+        # As progression only increases for the base game
+        # in the Gales or Northern range, we can assume
+        # access to the Gales cabin is required, as the
+        # Northern range would never give enough peaks
+        self.create_data(
+            BaseLocationName.TOOL_CRAMPONS_6,
+            CabinRegionName.GALES,
+            BaseItemName.TOOL_CRAMPONS_6
         )
-        self.create_location(
-            PoYLocationName.TOOL_CRAMPONS_10,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_CRAMPONS_10
+
+        # 10 point crampons require at least 3 advanced peaks
+        # AND 22 base game peaks in total, so access should be
+        # locked behind advanced
+        self.create_data(
+            BaseLocationName.TOOL_CRAMPONS_10,
+            AdvancedRegionName.CATEGORY,
+            BaseItemName.TOOL_CRAMPONS_10
         )
-        self.create_location(
-            PoYLocationName.TOOL_ICE_AXES,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_ICE_AXES
+
+        # Ice axes are locked behind 3 advanced OR ymir's shadow
+        self.create_data(
+            BaseLocationName.TOOL_ICE_AXES,
+            AdvancedRegionName.CATEGORY,
+            BaseItemName.TOOL_ICE_AXES
         )
-        self.create_location(
-            PoYLocationName.TOOL_MONOCULAR,
-            PoYRegionName.GALES_THREE_BROTHERS,
-            PoYItemName.TOOL_MONOCULAR
+
+        # Monocular locked behind three brothers
+        self.create_data(
+            BaseLocationName.TOOL_MONOCULAR,
+            FundamentalsRegionName.THREE_BROTHERS,
+            BaseItemName.TOOL_MONOCULAR
         )
-        self.create_location(
-            PoYLocationName.TOOL_PHONOGRAPH,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_PHONOGRAPH
+
+        # Phonograph is locked behind either completing
+        # paltry peak OR completing at least 2 fundamentals
+        self.create_data(
+            BaseLocationName.TOOL_PHONOGRAPH,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.TOOL_PHONOGRAPH
         )
-        self.create_location(
-            PoYLocationName.TOOL_PIPE,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_PIPE
+
+        # Need to beat all intermediate time trials
+        # for the pipe
+        self.create_data(
+            BaseLocationName.TOOL_PIPE,
+            IntermediateRegionName.CATEGORY,
+            BaseItemName.TOOL_PIPE
         )
-        self.create_location(
-            PoYLocationName.TOOL_POCKETWATCH
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_POCKETWATCH
+
+        # Pocketwatch is given after completing at least 2
+        # intermediate peaks
+        self.create_data(
+            BaseLocationName.TOOL_POCKETWATCH
+            IntermediateRegionName.CATEGORY,
+            BaseItemName.TOOL_POCKETWATCH
         )
-        self.create_location(
-            PoYLocationName.TOOL_ROPE,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_ROPE
+
+        # Rope is given after gray gully, or completing
+        # at least 3 fundamentals
+        self.create_data(
+            BaseLocationName.TOOL_ROPE,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.TOOL_ROPE
         )
-        self.create_location(
-            PoYLocationName.TOOL_ROPE_DOUBLE,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TOOL_ROPE_DOUBLE
+
+        # Double length rope is given after
+        # collecting all picture pieces
+        # The last picture pieces are on advanced peaks
+        self.create_data(
+            BaseLocationName.TOOL_ROPE_DOUBLE,
+            AdvancedRegionName.CATEGORY,
+            BaseItemName.TOOL_ROPE_DOUBLE
         )
 
         ## DLC
         # Gentiana
-        self.create_location(
-            PoYLocationName.GENTIANA_MARAS_ARCH,
-            PoYRegionName.ALPS_MARAS_ARCH,
-            PoYItemName.GENTIANA
+        self.create_data(
+            DlcLocationName.GENTIANA_MARAS_ARCH,
+            EssentialsRegionName.MARAS_ARCH,
+            DlcItemName.GENTIANA
         )
-        self.create_location(
-            PoYLocationName.GENTIANA_TREPPENWALD,
-            PoYRegionName.ALPS_TREPPENWALD,
-            PoYItemName.GENTIANA
+        self.create_data(
+            DlcLocationName.GENTIANA_TREPPENWALD,
+            EssentialsRegionName.TREPPENWALD,
+            DlcItemName.GENTIANA
         )
-        self.create_location(
-            PoYLocationName.GENTIANA_QUIETUDE,
-            PoYRegionName.ALPS_QUIETUDE,
-            PoYItemName.GENTIANA
+        self.create_data(
+            DlcLocationName.GENTIANA_QUIETUDE,
+            EssentialsRegionName.QUIETUDE,
+            DlcItemName.GENTIANA
         )
-        self.create_location(
-            PoYLocationName.GENTIANA_ELJUNS_FOLLY,
-            PoYRegionName.ALPS_ELJUNS_FOLLY,
-            PoYItemName.GENTIANA
+        self.create_data(
+            DlcLocationName.GENTIANA_ELJUNS_FOLLY,
+            EssentialsRegionName.ELJUNS_FOLLY,
+            DlcItemName.GENTIANA
         )
-        self.create_location(
-            PoYLocationName.GENTIANA_EINVALD_FALLS,
-            PoYRegionName.ALPS_EINVALD_FALLS,
-            PoYItemName.GENTIANA
+        self.create_data(
+            DlcLocationName.GENTIANA_EINVALD_FALLS,
+            GreatsRegionName.EINVALD_FALLS,
+            DlcItemName.GENTIANA
         )
-        self.create_location(
-            PoYLocationName.GENTIANA_MHOR_DRUIM,
-            PoYRegionName.ALPS_MHOR_DRUIM,
-            PoYItemName.GENTIANA
+        self.create_data(
+            DlcLocationName.GENTIANA_MHOR_DRUIM,
+            GreatsRegionName.MHOR_DRUIM,
+            DlcItemName.GENTIANA
         )
-        self.create_location(
-            PoYLocationName.GENTIANA_TOWERING_VISIR,
-            PoYRegionName.ALPS_TOWERING_VISIR,
-            PoYItemName.GENTIANA
+        self.create_data(
+            DlcLocationName.GENTIANA_TOWERING_VISIR,
+            ArcticRegionName.TOWERING_VISIR,
+            DlcItemName.GENTIANA
         )
 
         # Edelweiss
-        self.create_location(
-            PoYLocationName.EDELWEISS_GREAT_BOK_TREE,
-            PoYRegionName.ALPS_GREAT_BOK_TREE,
-            PoYItemName.EDELWEISS
+        self.create_data(
+            DlcLocationName.EDELWEISS_GREAT_BOK_TREE,
+            EssentialsRegionName.GREAT_BOK_TREE,
+            DlcItemName.EDELWEISS
         )
-        self.create_location(
-            PoYLocationName.EDELWEISS_CASTLE_OF_THE_SWAN_KING,
-            PoYRegionName.ALPS_CASTLE_OF_THE_SWAN_KING,
-            PoYItemName.EDELWEISS
+        self.create_data(
+            DlcLocationName.EDELWEISS_CASTLE_OF_THE_SWAN_KING,
+            EssentialsRegionName.CASTLE_OF_THE_SWAN_KING,
+            DlcItemName.EDELWEISS
         )
-        self.create_location(
-            PoYLocationName.EDELWEISS_IVORY_GRANITES,
-            PoYRegionName.ALPS_IVORY_GRANITES,
-            PoYItemName.EDELWEISS
+        self.create_data(
+            DlcLocationName.EDELWEISS_IVORY_GRANITES,
+            EssentialsRegionName.IVORY_GRANITES,
+            DlcItemName.EDELWEISS
         )
-        self.create_location(
-            PoYLocationName.EDELWEISS_DUNDERHORN,
-            PoYRegionName.ALPS_DUNDERHORN,
-            PoYItemName.EDELWEISS
+        self.create_data(
+            DlcLocationName.EDELWEISS_DUNDERHORN,
+            GreatsRegionName.DUNDERHORN,
+            DlcItemName.EDELWEISS
         )
-        self.create_location(
-            PoYLocationName.EDELWEISS_WELKIN_PASS,
-            PoYRegionName.ALPS_WELKIN_PASS,
-            PoYItemName.EDELWEISS
+        self.create_data(
+            DlcLocationName.EDELWEISS_WELKIN_PASS,
+            GreatsRegionName.WELKIN_PASS,
+            DlcItemName.EDELWEISS
         )
-        self.create_location(
-            PoYLocationName.EDELWEISS_TOWERING_VISIR,
-            PoYRegionName.ALPS_TOWERING_VISIR,
-            PoYItemName.EDELWEISS
+        self.create_data(
+            DlcLocationName.EDELWEISS_TOWERING_VISIR,
+            ArcticRegionName.TOWERING_VISIR,
+            DlcItemName.EDELWEISS
         )
-        self.create_location(
-            PoYLocationName.EDELWEISS_ELDRIS_WALL,
-            PoYRegionName.ALPS_ELDRIS_WALL,
-            PoYItemName.EDELWEISS
+        self.create_data(
+            DlcLocationName.EDELWEISS_ELDRIS_WALL,
+            ArcticRegionName.ELDRIS_WALL,
+            DlcItemName.EDELWEISS
         )
 
         # Idols
-        self.create_location(
-            PoYLocationName.IDOL_OF_CRIMPS_1,
-            PoYRegionName.ALPS_GRAINNE_SPIRE,
-            PoYItemName.IDOL_OF_CRIMPS_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_CRIMPS_1,
+            EssentialsRegionName.GRAINNE_SPIRE,
+            DlcItemName.IDOL_OF_CRIMPS_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_CRIMPS_2,
-            PoYRegionName.ALPS_GREAT_BOK_TREE,
-            PoYItemName.IDOL_OF_CRIMPS_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_CRIMPS_2,
+            EssentialsRegionName.GREAT_BOK_TREE,
+            DlcItemName.IDOL_OF_CRIMPS_2
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_CRUELTY_1,
-            PoYRegionName.ALPS_IVORY_GRANITES,
-            PoYItemName.IDOL_OF_CRUELTY_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_CRUELTY_1,
+            EssentialsRegionName.IVORY_GRANITES,
+            DlcItemName.IDOL_OF_CRUELTY_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_CRUELTY_2,
-            PoYRegionName.ALPS_MOUNT_MHORGORM,
-            PoYItemName.IDOL_OF_CRUELTY_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_CRUELTY_2,
+            ArcticRegionName.MOUNT_MHORGORM,
+            DlcItemName.IDOL_OF_CRUELTY_2
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_FEATHERS_1,
-            PoYRegionName.ALPS_MHOR_DRUIM,
-            PoYItemName.IDOL_OF_FEATHERS_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_FEATHERS_1,
+            GreatsRegionName.MHOR_DRUIM,
+            DlcItemName.IDOL_OF_FEATHERS_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_FEATHERS_2,
-            PoYRegionName.ALPS_WELKIN_PASS,
-            PoYItemName.IDOL_OF_FEATHERS_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_FEATHERS_2,
+            GreatsRegionName.WELKIN_PASS,
+            DlcItemName.IDOL_OF_FEATHERS_2
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_GREATER_BALANCE_1,
-            PoYRegionName.ALPS_ULLRS_CHASM,
-            PoYItemName.IDOL_OF_GREATER_BALANCE_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_GREATER_BALANCE_1,
+            ArcticRegionName.ULLRS_CHASM,
+            DlcItemName.IDOL_OF_GREATER_BALANCE_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_GREATER_BALANCE_2,
-            PoYRegionName.ALPS_TOWERING_VISIR,
-            PoYItemName.IDOL_OF_GREATER_BALANCE_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_GREATER_BALANCE_2,
+            ArcticRegionName.TOWERING_VISIR,
+            DlcItemName.IDOL_OF_GREATER_BALANCE_2
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_ICE_1,
-            PoYRegionName.ALPS_MHOR_DRUIM,
-            PoYItemName.IDOL_OF_ICE_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_ICE_1,
+            GreatsRegionName.MHOR_DRUIM,
+            DlcItemName.IDOL_OF_ICE_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_ICE_2,
-            PoYRegionName.ALPS_ELDRIS_WALL,
-            PoYItemName.IDOL_OF_ICE_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_ICE_2,
+            ArcticRegionName.ELDRIS_WALL,
+            DlcItemName.IDOL_OF_ICE_2
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_PINCHES_1,
-            PoYRegionName.ALPS_SEASIDE_TRIBUNE,
-            PoYItemName.IDOL_OF_PINCHES_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_PINCHES_1,
+            EssentialsRegionName.SEASIDE_TRIBUNE,
+            DlcItemName.IDOL_OF_PINCHES_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_PINCHES_2,
-            PoYRegionName.ALPS_TOWERING_VISIR,
-            PoYItemName.IDOL_OF_PINCHES_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_PINCHES_2,
+            ArcticRegionName.TOWERING_VISIR,
+            DlcItemName.IDOL_OF_PINCHES_2
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_PITCHES_1,
-            PoYRegionName.ALPS_CASTLE_OF_THE_SWAN_KING,
-            PoYItemName.IDOL_OF_PITCHES_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_PITCHES_1,
+            EssentialsRegionName.CASTLE_OF_THE_SWAN_KING,
+            DlcItemName.IDOL_OF_PITCHES_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_PITCHES_2,
-            PoYRegionName.ALPS_ELJUNS_FOLLY,
-            PoYItemName.IDOL_OF_PITCHES_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_PITCHES_2,
+            EssentialsRegionName.ELJUNS_FOLLY,
+            DlcItemName.IDOL_OF_PITCHES_2
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_SLOPERS_1,
-            PoYRegionName.ALPS_CASTLE_OF_THE_SWAN_KING,
-            PoYItemName.IDOL_OF_SLOPERS_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_SLOPERS_1,
+            EssentialsRegionName.CASTLE_OF_THE_SWAN_KING,
+            DlcItemName.IDOL_OF_SLOPERS_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_SLOPERS_2,
-            PoYRegionName.ALPS_OLD_REKKJA,
-            PoYItemName.IDOL_OF_SLOPERS_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_SLOPERS_2,
+            EssentialsRegionName.OLD_REKKJA,
+            DlcItemName.IDOL_OF_SLOPERS_2
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_SUNDOWN_1,
-            PoYRegionName.ALPS_CASTLE_OF_THE_SWAN_KING,
-            PoYItemName.IDOL_OF_SUNDOWN_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_SUNDOWN_1,
+            EssentialsRegionName.CASTLE_OF_THE_SWAN_KING,
+            DlcItemName.IDOL_OF_SUNDOWN_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_SUNDOWN_2,
-            PoYRegionName.ALPS_DUNDERHORN,
-            PoYItemName.IDOL_OF_SUNDOWN_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_SUNDOWN_2,
+            GreatsRegionName.DUNDERHORN,
+            DlcItemName.IDOL_OF_SUNDOWN_2
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_SEEDS_1,
-            PoYRegionName.ALPS_TREPPENWALD,
-            PoYItemName.IDOL_OF_SEEDS_1
+        self.create_data(
+            DlcLocationName.IDOL_OF_SEEDS_1,
+            EssentialsRegionName.TREPPENWALD,
+            DlcItemName.IDOL_OF_SEEDS_1
         )
-        self.create_location(
-            PoYLocationName.IDOL_OF_SEEDS_2,
-            PoYRegionName.ALPS_ELDRIS_WALL,
-            PoYItemName.IDOL_OF_SEEDS_2
+        self.create_data(
+            DlcLocationName.IDOL_OF_SEEDS_2,
+            ArcticRegionName.ELDRIS_WALL,
+            DlcItemName.IDOL_OF_SEEDS_2
         )
 
         # Tickets
-        self.create_location(
+        # The northern range ticket is accessible after
+        # beating 3 advanced peaks or ymir's shadow
+        self.create_data(
             PoYLocationData.TICKET_NORTHERN_RANGE,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.TICKET_NORTHERN_RANGE
+            AdvancedRegionName.CATEGORY,
+            BaseItemName.TICKET_NORTHERN_RANGE
         )
 
         # Books
-        self.create_location(
-            PoYLocationName.BOOK_GALES_FUNDAMENTALS,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.BOOK_GALES_FUNDAMENTALS
-        )
-        self.create_location(
-            PoYLocationName.BOOK_GALES_INTERMEDIATE,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.BOOK_GALES_INTERMEDIATE
-        )
-        self.create_location(
-            PoYLocationName.BOOK_GALES_ADVANCED,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.BOOK_GALES_ADVANCED
-        )
-        self.create_location(
-            PoYLocationName.BOOK_NORTHERN_EXPERT,
-            PoYRegionName.GALES_CABIN,
-            PoYItemName.BOOK_NORTHERN_EXPERT
-        )
-        self.create_location(
-            PoYLocationName.BOOK_ALPS_ESSENTIALS,
-            PoYRegionName.ALPS_CABIN,
-            PoYItemName.BOOK_ALPS_ESSENTIALS
-        )
-        self.create_location(
-            PoYLocationName.BOOK_ALPS_GREATS,
-            PoYRegionName.ALPS_CABIN,
-            PoYItemName.BOOK_ALPS_GREATS
-        )
-        self.create_location(
-            PoYLocationName.BOOK_ALPS_ARCTIC,
-            PoYRegionName.ALPS_CABIN,
-            PoYItemName.BOOK_ALPS_ARCTIC
+        # Fundamentals always accessible from the cabin
+        self.create_data(
+            BaseLocationName.BOOK_FUNDAMENTALS,
+            CabinRegionName.GALES,
+            BaseItemName.BOOK_FUNDAMENTALS
         )
 
-        # Create stamp locations
-        self.create_stamps(gales_fundamentals, PoYItemName.STAMP_GALES_FUNDAMENTALS)
-        self.create_stamps(gales_intermediate, PoYItemName.STAMP_GALES_INTERMEDIATE)
-        self.create_stamps(gales_advanced,     PoYItemName.STAMP_GALES_ADVANCED)
-        self.create_stamps(northern_expert,    PoYItemName.STAMP_NORTHERN_EXPERT)
-        self.create_stamps(alps_essentials,    PoYItemName.STAMP_ALPS_ESSENTIALS)
-        self.create_stamps(alps_greats,        PoYItemName.STAMP_ALPS_GREATS)
-        self.create_stamps(alps_arctic,        PoYItemName.STAMP_ALPS_ARCTIC)
+        # Intermediate book requires fundamentals access
+        self.create_data(
+            BaseLocationName.BOOK_INTERMEDIATE,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.BOOK_INTERMEDIATE
+        )
 
-    def create_location(
+        # Advanced book requires intermediate access
+        self.create_data(
+            BaseLocationName.BOOK_ADVANCED,
+            IntermediateRegionName.CATEGORY,
+            BaseItemName.BOOK_ADVANCED
+        )
+
+        # Expert book requires advanced access
+        self.create_data(
+            BaseLocationName.BOOK_NORTHERN_EXPERT,
+            AdvancedRegionName.CATEGORY,
+            BaseItemName.BOOK_NORTHERN_EXPERT
+        )
+
+        # DLC books
+        # Essentials is unlocked as soon as you get
+        # access to the Alps cabin (always have access normally anyway)
+        self.create_data(
+            DlcLocationName.BOOK_ALPS_ESSENTIALS,
+            CabinRegionName.ALPS,
+            DlcItemName.BOOK_ALPS_ESSENTIALS
+        )
+
+        # Alpine greats requires access to the essentials
+        self.create_data(
+            DlcLocationName.BOOK_ALPS_GREATS,
+            EssentialsRegionName.CATEGORY,
+            DlcItemName.BOOK_ALPS_GREATS
+        )
+
+        # Arduous and arctic requires access to the alpine greats
+        self.create_data(
+            DlcLocationName.BOOK_ALPS_ARCTIC,
+            GreatsRegionName.CATEGORY,
+            DlcItemName.BOOK_ALPS_ARCTIC
+        )
+
+        # Create stamp locations for all peaks in each category
+        self.create_stamps(FundamentalsRegionName, BaseItemName.STAMP_FUNDAMENTALS)
+        self.create_stamps(IntermediateRegionName, BaseItemName.STAMP_INTERMEDIATE)
+        self.create_stamps(AdvancedRegionName,     BaseItemName.STAMP_ADVANCED)
+        self.create_stamps(ExpertRegionName,       BaseItemName.STAMP_NORTHERN_EXPERT)
+        self.create_stamps(EssentialsRegionName,   DlcItemName.STAMP_ALPS_ESSENTIALS)
+        self.create_stamps(GreatsRegionName,       DlcItemName.STAMP_ALPS_GREATS)
+        self.create_stamps(ArcticRegionName,       DlcItemName.STAMP_ALPS_ARCTIC)
+
+    def create_data(
         self,
-        name: PoYLocationName,
-        region_name: PoYRegionName,
-        item_name: PoYItemName
+        name: LocationName | LocationSuffix,
+        region: RegionName,
+        item_name: ItemName
     ) -> None:
         """
-        Creates a location and stores it.
+        Creates location data and stores it.
 
-        :param name: The name of the location
+        :param name: The name of the location, or its suffix
         :param region_name: The region this location is for
         :param item_name: The item locked behind this location
         """
 
-        if region_name not in self.locations:
-            self.locations[region_name] = []
+        region_name = region.value
 
-        self.locations[region_name].append(PoYLocationData(
-            name, item_name
-        ))
+        # By default, just use the name of the location
+        data_name = name.value
+
+        # If a suffix is provided, append the suffix
+        # to the name of the region
+        if type(name) == LocationSuffix:
+            data_name = f"{region_name.value} {name.value}"
+
+        # Create the data
+        data = LocationData(
+            self.handler.new_id(), data_name, item_name.value
+        )
+
+        # If this region has no list of locations yet,
+        # create an empty list for it
+        if region_name not in self.region_to_locations:
+            self.region_to_locations[region_name] = []
+
+        # Store the location data
+        self.region_to_locations[region_name].append(data)
+        self.locations[data_name] = data
 
     def create_stamps(
         self,
-        category: list[PoYRegionName],
-        stamp: PoYItemName
+        category: PeakName,
+        stamp: ItemName
     ) -> None:
         """
         Creates the stamp locations for all
@@ -601,33 +701,56 @@ class PoYLocations:
         :param stamp: The type of stamp for this category
         """
 
-        for peak in gales_fundamentals:
-            self.create_location(
-                f"{peak.value} Stamp",
-                peak, stamp
+        for region in category:
+            self.create_data(
+                LocationSuffix.STAMP,
+                region, stamp
             )
 
-
-class PeaksLocation(Location):
-    game: str = GAME
-    poy_data: PoYLocationData
-
-    def __init__(self, data: PoYLocationData, *args, **kwargs) -> None:
+    def get_data(
+        self,
+        name: LocationName
+    ) -> LocationData | None:
         """
-        Initializes a PeaksLocation.
+        Gets data for a location by a given name.
 
-        :param data: The data for this location
-        :param args: Arguments to pass to Location
-        :param kwargs: Keyword arguments to pass to Location
+        :param name: The name of the location to get data for
+        :returns: The location data, or None if not found
         """
 
-        self.poy_data = data
-        super().__init__(*args, **kwargs)
+        return self.locations.get(name.value, None)
 
-    def poy_create_item(self, world: "PeaksWorld") -> None:
+    def get_data_suffix(
+        self,
+        region: RegionName,
+        suffix: LocationSuffix
+    ) -> LocationData | None:
         """
-        Creates the item which is locked behind this location.
+        Gets data for a location by a given region
+        and location suffix.
+
+        :param region: The region the location is within
+        :param suffix: The suffix of the location
+        :returns: The data for this location or None if not found
         """
 
-        item: PeaksItem = world.create_item(self.poy_data.item_name)
-        self.place_locked_item(item)
+        return self.locations.get(
+            f"{region.value} {suffix.value}",
+            None
+        )
+
+    def get_data_for_region(
+        self,
+        region: RegionName
+    ) -> list[LocationData]:
+        """
+        Gets data for all locations in a given region.
+
+        :param region: The region to get locations for
+        :returns: The list of all location data for this region,
+                  or an empty list of none was found
+        """
+
+        return self.region_to_locations.get(
+            region.value, []
+        )
