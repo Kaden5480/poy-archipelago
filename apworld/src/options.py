@@ -3,14 +3,61 @@ from Options import Choice, \
                     DeathLink, \
                     Toggle
 
-class EnableDLCOption(Toggle):
+class EnableFundamentalsOption(Toggle):
     """
-    Whether DLC peaks and collectables should be available for randomisation.
-
-    This requires you to own the Alps DLC.
+    Whether fundamental peaks and collectables should be available for randomisation.
     """
 
-    display_name = "Enable DLC"
+    display_name = "Enable Fundamentals"
+
+class EnableIntermediateOption(Toggle):
+    """
+    Whether intermediate peaks and collectables should be available for randomisation.
+    """
+
+    display_name = "Enable Intermediate"
+
+class EnableAdvancedOption(Toggle):
+    """
+    Whether advanced peaks and collectables should be available for randomisation.
+    """
+
+    display_name = "Enable Advanced"
+
+class EnableExpertOption(Toggle):
+    """
+    Whether expert peaks and collectables should be available for randomisation.
+    """
+
+    display_name = "Enable Expert"
+
+class EnableEssentialsOption(Toggle):
+    """
+    Whether essentials peaks and collectables should be available for randomisation.
+
+    This requires you to own the DLC.
+    """
+
+    display_name = "Enable Essentials"
+
+class EnableGreatsOption(Toggle):
+    """
+    Whether alpine greats peaks and collectables should be available for randomisation.
+
+    This requires you to own the DLC.
+    """
+
+    display_name = "Enable Alpine Greats"
+
+class EnableArcticOption(Toggle):
+    """
+    Whether arctic and arduous peaks and collectables should be available for randomisation.
+
+    This requires you to own the DLC.
+    """
+
+    display_name = "Enable Arduous and Arctic"
+
 
 ## Items ##
 
@@ -20,6 +67,7 @@ class StartingBarometerOption(Toggle):
     """
 
     display_name = "Start With Barometer and Map"
+
 
 class StartingHandsOption(Choice):
     """
@@ -48,6 +96,7 @@ class RequireCramponsOption(Toggle):
 
     display_name = "Require Crampons"
 
+
 class RandomiseLevelsOption(Toggle):
     """
     Whether the entrances and exits to levels should be randomised.
@@ -55,11 +104,18 @@ class RandomiseLevelsOption(Toggle):
 
     display_name = "Randomise Levels"
 
+
 @dataclass
 class PeaksOptions(PerGameCommonOptions):
     death_link: DeathLink
 
-    enable_dlc: EnableDLCOption
+    enable_fundamentals: EnableFundamentalsOption
+    enable_intermediate: EnableIntermediateOption
+    enable_advanced: EnableAdvancedOption
+    enable_expert: EnableExpertOption
+    enable_alp_essentials: EnableEssentialsOption
+    enable_alp_greats: EnableGreatsOption
+    enable_alp_arctic: EnableArcticOption
 
     # Items
     starting_barometer: StartingBarometerOption
