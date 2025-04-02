@@ -125,6 +125,9 @@ class PeaksWorld(World):
             PoYItemName.BOOK_GALES_FUNDAMENTALS
         )
 
+        # TODO: potential issues with some categories being enabled/disabled
+        # e.g. intermediate but no fundamentals to access it
+
     @override
     def create_regions(self) -> None:
         """
@@ -258,7 +261,32 @@ class PeaksWorld(World):
             )
 
         # Tool unlocks
-
+        # TODO: These aren't really accurate, a stamp
+        # location needs to be made for a lot of these unlocks
+        add_rule(
+            self.multiworld.get_location(PoYLocationName.TOOL_CRAMPONS_6),
+            lambda state: state.has(
+                STAMP_GALES_FUNDAMENTALS.value,
+                self.player,
+                count = 10
+            )
+        )
+        add_rule(
+            self.multiworld.get_location(PoYLocationName.TOOL_CRAMPONS_10),
+            lambda state: state.has(
+                STAMP_GALES_ADVANCED.value,
+                self.player,
+                count = 3
+            )
+        )
+        add_rule(
+            self.multiworld.get_location(PoYLocationName.TOOL_ICE_AXES),
+            lambda state: state.has(
+                STAMP_GALES_ADVANCED.value,
+                self.player,
+                count = 3
+            )
+        )
 
 
         # If require crampons is set, make sure
@@ -277,7 +305,6 @@ class PeaksWorld(World):
                 region: PeaksRegion = self.poy_created_regions[PoYRegionName.ALPS_CABIN]
                 for region in self.poy_data_regions.alps_arctic.keys():
                     add_rule(region, has_crampons)
-
 
         ## DLC
         # Alpine greats
