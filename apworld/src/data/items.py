@@ -3,8 +3,11 @@ from BaseClasses import ItemClassification
 from .id_handler import IDHandler
 
 from ..names.items import ItemName, \
+                          ItemSuffix, \
                           BaseItemName, \
                           DlcItemName
+
+from ..names.regions import RegionName
 
 class ItemData:
     # This item's ID
@@ -63,6 +66,14 @@ class Items:
 
         self.__create_all()
 
+    @property
+    def count(self) -> int:
+        """
+        The number of items stored.
+        """
+
+        return len(self.__items)
+
     def get_data(
         self,
         name: ItemName
@@ -76,9 +87,50 @@ class Items:
 
         return self.__items.get[name.value]
 
-    def __create_data(
+    def get_data_suffix(
         self,
-        name: ItemName,
+        suffix: ItemSuffix,
+        region: RegionName
+    ) -> ItemData:
+        """
+        Gets data for a given item suffix found in a provided region.
+
+        :param suffix: The suffix of the item to find
+        :param region: The region this item is found within
+        :returns: The item data if found, None otherwise
+        """
+
+        return self.__items.get(
+            f"{region.value} {suffix.value}",
+            None
+        )
+
+    def get_stamps(
+        self,
+        category: PeakName
+    ) -> list[ItemData]:
+        """
+        Gets all stamps for a given category of peaks.
+
+        :param category: The category of peaks to get stamps for
+        :returns: The list of all stamps for the category
+        """
+
+        stamps = []
+
+        for region in category:
+            stamp = self.get_data_suffix(
+                ItemSuffix.STAMP, region
+            )
+
+            if stamp is not None:
+                stamps.append(stamp)
+
+        return stamps
+
+    def __create_data_str(
+        self,
+        name: str,
         classification: ItemClassification
     ) -> None:
         """
@@ -90,10 +142,60 @@ class Items:
         :param classification: The classification of the item
         """
 
-        self.__items[name.value] = ItemData(
-            self.__handler.new_id(), name.value, classification
+        self.__items[name] = ItemData(
+            self.__handler.new_id(), name, classification
         )
 
+    def __create_data(
+        self,
+        name: ItemName,
+        classification: ItemClassification
+    ) -> None:
+        """
+        Creates data for an item with the given name
+        and classification
+
+        :param name: The name of the item
+        :param classification: The classification of the item
+        """
+
+        self.__create_data_str(name.value, classification)
+
+    def __create_data_suffix(
+        self,
+        suffix: ItemSuffix,
+        region: RegionName,
+        classification: ItemClassification
+    ) -> None:
+        """
+        Creates an item with a given suffix, which is found
+        in a provided region.
+
+        :param suffix: The suffix of the item
+        :param region: The region this item is from
+        :parma classification: The classification of this item
+        """
+
+        self.__create_data_str(
+            f"{region.value} {suffix.value}", classification
+        )
+
+    def __create_stamps(
+        self,
+        category: PeakName,
+    ) -> None:
+        """
+        Creates stamp items for all peaks in
+        a given category.
+
+        :param category: The category to create stamp items for
+        """
+
+        for region in category:
+            self.__create_data_suffix(
+                ItemSuffix.STAMP, region,
+                ItemClassification.progression
+            )
 
     def __create_all() -> None:
         """
@@ -177,10 +279,11 @@ class Items:
         self.__create_data(DlcItemName.BOOK_ALPS_GREATS,          ItemClassification.progression)
         self.__create_data(DlcItemName.BOOK_ALPS_ARCTIC,          ItemClassification.progression)
 
-        self.__create_data(DlcItemName.STAMP_GALES_FUNDAMENTALS,  ItemClassification.progression)
-        self.__create_data(DlcItemName.STAMP_GALES_INTERMEDIATE,  ItemClassification.progression)
-        self.__create_data(DlcItemName.STAMP_GALES_ADVANCED,      ItemClassification.progression)
-        self.__create_data(DlcItemName.STAMP_NORTHERN_EXPERT,     ItemClassification.progression)
-        self.__create_data(DlcItemName.STAMP_ALPS_ESSENTIALS,     ItemClassification.progression)
-        self.__create_data(DlcItemName.STAMP_ALPS_GREATS,         ItemClassification.progression)
-        self.__create_data(DlcItemName.STAMP_ALPS_ARCTIC,         ItemClassification.progression)
+        # Create stamp items for all peaks in each category
+        self.__create_stamps(FundamentalsRegionName)
+        self.__create_stamps(IntermediateRegionName)
+        self.__create_stamps(AdvancedRegionName)
+        self.__create_stamps(ExpertRegionName)
+        self.__create_stamps(EssentialsRegionName)
+        self.__create_stamps(GreatsRegionName)
+        self.__create_stamps(ArcticRegionName)
