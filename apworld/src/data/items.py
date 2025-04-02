@@ -1,6 +1,7 @@
 from enum import StrEnum
 
 from .id_handler import IDHandler
+from .regions import all_peaks
 
 class PoYItemName(StrEnum):
     ## Base game
@@ -72,6 +73,8 @@ class PoYItemName(StrEnum):
     IDOL_OF_SEEDS_2           = "Idol of Seeds #2"
 
     ## Extra items which can be randomised
+    TICKET_NORTHERN_RANGE     = "Northern Range Ticket"
+
     BOOK_GALES_FUNDAMENTALS   = "Fundamentals Book"
     BOOK_GALES_INTERMEDIATE   = "Intermediate Book"
     BOOK_GALES_ADVANCED       = "Advanced Book"
@@ -79,6 +82,14 @@ class PoYItemName(StrEnum):
     BOOK_ALPS_ESSENTIALS      = "Essentials Book"
     BOOK_ALPS_GREATS          = "Alpine Greats Book"
     BOOK_ALPS_ARCTIC          = "Arduous and Arctic Book"
+
+    STAMP_GALES_FUNDAMENTALS  = "Fundamentals Stamp"
+    STAMP_GALES_INTERMEDIATE  = "Intermediate Stamp"
+    STAMP_GALES_ADVANCED      = "Advanced Stamp"
+    STAMP_NORTHERN_EXPERT     = "Expert Stamp"
+    STAMP_ALPS_ESSENTIALS     = "Essentials Stamp"
+    STAMP_ALPS_GREATS         = "Alpine Greats Stamp"
+    STAMP_ALPS_ARCTIC         = "Arduous and Arctic Stamp"
 
 
 base_items = [
@@ -140,7 +151,6 @@ dlc_items = [
     IDOL_OF_SEEDS_1,
     IDOL_OF_SEEDS_2,
 ]
-
 
 class PoYItemData:
     id: int
@@ -245,6 +255,8 @@ class PoYItems:
         self.create_item(PoYItemName.IDOL_OF_SEEDS_2,           ItemClassification.progression)
 
         ## Extra items which can be randomised
+        self.create_item(PoYItemName.TICKET_NORTHERN_RANGE,     ItemClassification.progression)
+
         self.create_item(PoYItemName.BOOK_GALES_FUNDAMENTALS,   ItemClassification.progression)
         self.create_item(PoYItemName.BOOK_GALES_INTERMEDIATE,   ItemClassification.progression)
         self.create_item(PoYItemName.BOOK_GALES_ADVANCED,       ItemClassification.progression)
@@ -252,6 +264,14 @@ class PoYItems:
         self.create_item(PoYItemName.BOOK_ALPS_ESSENTIALS,      ItemClassification.progression)
         self.create_item(PoYItemName.BOOK_ALPS_GREATS,          ItemClassification.progression)
         self.create_item(PoYItemName.BOOK_ALPS_ARCTIC,          ItemClassification.progression)
+
+        self.create_item(PoYItemName.STAMP_GALES_FUNDAMENTALS,  ItemClassification.progression)
+        self.create_item(PoYItemName.STAMP_GALES_INTERMEDIATE,  ItemClassification.progression)
+        self.create_item(PoYItemName.STAMP_GALES_ADVANCED,      ItemClassification.progression)
+        self.create_item(PoYItemName.STAMP_NORTHERN_EXPERT,     ItemClassification.progression)
+        self.create_item(PoYItemName.STAMP_ALPS_ESSENTIALS,     ItemClassification.progression)
+        self.create_item(PoYItemName.STAMP_ALPS_GREATS,         ItemClassification.progression)
+        self.create_item(PoYItemName.STAMP_ALPS_ARCTIC,         ItemClassification.progression)
 
     def create_item(
         self,
