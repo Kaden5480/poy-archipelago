@@ -143,7 +143,7 @@ class Locations:
 
     def get_stamps(
         self,
-        category: PeakName
+        category: type[PeakName]
     ) -> list[LocationData]:
         """
         Gets data for all stamps in a given category
@@ -248,7 +248,7 @@ class Locations:
 
     def __create_stamps(
         self,
-        category: PeakName
+        category: type[PeakName]
     ) -> None:
         """
         Creates all stamps for a given category of peaks.

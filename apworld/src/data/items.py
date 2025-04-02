@@ -107,7 +107,7 @@ class Items:
 
     def get_stamps(
         self,
-        category: PeakName
+        category: type[PeakName]
     ) -> list[ItemData]:
         """
         Gets all stamps for a given category of peaks.
@@ -182,7 +182,7 @@ class Items:
 
     def __create_stamps(
         self,
-        category: PeakName,
+        category: type[PeakName],
     ) -> None:
         """
         Creates stamp items for all peaks in

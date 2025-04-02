@@ -64,7 +64,7 @@ class Regions:
 
     def get_data_for_category(
         self,
-        category: RegionName
+        category: type[RegionName]
     ) -> list[RegionData]:
         """
         Gets all region data in a given category
@@ -89,7 +89,7 @@ class Regions:
 
     def __create_category(
         self,
-        category: RegionName
+        category: type[RegionName]
     ) -> None:
         """
         Creates region data for all regions
