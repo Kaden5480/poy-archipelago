@@ -151,4 +151,4 @@ DlcPeakName = AlpsPeakName
 PeakName = BasePeakName | DlcPeakName
 
 # Everything
-RegionName = CabinName | BasePeakName | DlcPeakName
+RegionName = CabinRegionName | BasePeakName | DlcPeakName

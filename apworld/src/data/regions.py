@@ -2,16 +2,7 @@ from typing import Iterable
 
 from .id_handler import IDHandler
 
-from ..names.regions import RegionName, \
-                            CabinRegionName, \
-                            PeakName, \
-                            FundamentalsRegionName, \
-                            IntermediateRegionName, \
-                            AdvancedRegionName, \
-                            ExpertRegionName, \
-                            EssentialsRegionName, \
-                            GreatsRegionName, \
-                            ArcticRegionName
+from ..names.regions import *
 
 class RegionData:
     __id: int
@@ -50,6 +41,8 @@ class Regions:
 
         self.__handler = handler
         self.__regions = {}
+
+        self.__create_all()
 
     def __iter__(self) -> Iterable[RegionData]:
         """
@@ -107,7 +100,7 @@ class Regions:
         Creates the data for a region.
         """
 
-        self.__regions[region] = RegionData(
+        self.__regions[region.value] = RegionData(
             self.__handler.new_id(), region.value
         )
 

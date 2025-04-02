@@ -1,3 +1,5 @@
+from typing import Iterable
+
 from BaseClasses import LocationProgressType
 
 from .id_handler import IDHandler
@@ -86,7 +88,7 @@ class Locations:
             yield data
 
     @property
-    def count() -> int:
+    def count(self) -> int:
         """
         The number of locations stored.
         """
@@ -275,7 +277,7 @@ class Locations:
 
         self.__create_data_str(
             name.value, region.value,
-            item_name.value
+            item_name.value, progress_type
         )
 
     def __create_data_suffix(
@@ -298,7 +300,8 @@ class Locations:
         self.__create_data_str(
             f"{region.value} {suffix.value}",
             region.value,
-            f"{region.value} {item_suffix.value}"
+            f"{region.value} {item_suffix.value}",
+            progress_type
         )
 
     def __create_stamps(
@@ -487,13 +490,13 @@ class Locations:
         self.__create_data(
             BaseLocationName.CHALK_WALKERS_PILLAR,
             AdvancedRegionName.WALKERS_PILLAR,
-            BaseItemName.CHALK,
+            BaseItemName.CHALK_2,
             LocationProgressType.PRIORITY
         )
         self.__create_data(
             BaseLocationName.CHALK_ELDENHORN,
             AdvancedRegionName.ELDENHORN,
-            BaseItemName.CHALK,
+            BaseItemName.CHALK_2,
             LocationProgressType.PRIORITY
         )
 
@@ -626,7 +629,7 @@ class Locations:
         self.__create_data(
             BaseLocationName.ALL_FUNDAMENTALS_CHALK,
             FundamentalsRegionName.CATEGORY,
-            BaseItemName.CHALK,
+            BaseItemName.CHALK_2,
         )
         self.__create_data(
             BaseLocationName.ALL_FUNDAMENTALS_COFFEE,
@@ -648,7 +651,7 @@ class Locations:
         self.__create_data(
             BaseLocationName.ALL_INTERMEDIATE_CHALK,
             IntermediateRegionName.CATEGORY,
-            BaseItemName.CHALK,
+            BaseItemName.CHALK_2,
         )
         self.__create_data(
             BaseLocationName.ALL_INTERMEDIATE_COFFEE,
@@ -670,7 +673,7 @@ class Locations:
         self.__create_data(
             BaseLocationName.ALL_ADVANCED_CHALK,
             AdvancedRegionName.CATEGORY,
-            BaseItemName.CHALK,
+            BaseItemName.CHALK_2,
         )
         self.__create_data(
             BaseLocationName.ALL_ADVANCED_COFFEE,
@@ -776,9 +779,9 @@ class Locations:
         # Pocketwatch is given after completing at least 2
         # intermediate peaks
         self.__create_data(
-            BaseLocationName.TOOL_POCKETWATCH
+            BaseLocationName.TOOL_POCKETWATCH,
             IntermediateRegionName.CATEGORY,
-            BaseItemName.TOOL_POCKETWATCH
+            BaseItemName.TOOL_POCKETWATCH,
             LocationProgressType.PRIORITY
         )
 
@@ -795,7 +798,7 @@ class Locations:
         # collecting all picture pieces
         # The last picture pieces are on advanced peaks
         self.__create_data(
-            BaseLocationName.TOOL_ROPE_DOUBLE,
+            BaseLocationName.ALL_PICTURES_ROPE_DOUBLE,
             AdvancedRegionName.CATEGORY,
             BaseItemName.TOOL_ROPE_DOUBLE,
             LocationProgressType.PRIORITY
@@ -982,7 +985,7 @@ class Locations:
         # The northern range ticket is accessible after
         # beating 3 advanced peaks or ymir's shadow
         self.__create_data(
-            PoYLocationData.TICKET_NORTHERN_RANGE,
+            BaseLocationName.TICKET_NORTHERN_RANGE,
             AdvancedRegionName.CATEGORY,
             BaseItemName.TICKET_NORTHERN_RANGE,
             LocationProgressType.PRIORITY
@@ -991,25 +994,25 @@ class Locations:
         # Books
         # Fundamentals always accessible from the cabin
         self.__create_data(
-            BaseLocationName.BOOK_FUNDAMENTALS,
+            BaseLocationName.BOOK_GALES_FUNDAMENTALS,
             CabinRegionName.GALES,
-            BaseItemName.BOOK_FUNDAMENTALS,
+            BaseItemName.BOOK_GALES_FUNDAMENTALS,
             LocationProgressType.PRIORITY
         )
 
         # Intermediate book requires fundamentals access
         self.__create_data(
-            BaseLocationName.BOOK_INTERMEDIATE,
+            BaseLocationName.BOOK_GALES_INTERMEDIATE,
             FundamentalsRegionName.CATEGORY,
-            BaseItemName.BOOK_INTERMEDIATE,
+            BaseItemName.BOOK_GALES_INTERMEDIATE,
             LocationProgressType.PRIORITY
         )
 
         # Advanced book requires intermediate access
         self.__create_data(
-            BaseLocationName.BOOK_ADVANCED,
+            BaseLocationName.BOOK_GALES_ADVANCED,
             IntermediateRegionName.CATEGORY,
-            BaseItemName.BOOK_ADVANCED,
+            BaseItemName.BOOK_GALES_ADVANCED,
             LocationProgressType.PRIORITY
         )
 
@@ -1049,9 +1052,9 @@ class Locations:
 
         # Create time attack locations for peaks in each category
         # TODO: Add more later
-        self.__create_time_attack(FundamentalsRegionName, ItemName.TIME_ATTACK_FUNDAMENTALS)
-        self.__create_time_attack(IntermediateRegionName, ItemName.TIME_ATTACK_INTERMEDIATE)
-        self.__create_time_attack(AdvancedRegionName,     ItemName.TIME_ATTACK_ADVANCED)
+        self.__create_time_attack(FundamentalsRegionName, BaseItemName.TIME_ATTACK_FUNDAMENTALS)
+        self.__create_time_attack(IntermediateRegionName, BaseItemName.TIME_ATTACK_INTERMEDIATE)
+        self.__create_time_attack(AdvancedRegionName,     BaseItemName.TIME_ATTACK_ADVANCED)
 
         # Create stamp locations for all peaks in each category
         self.__create_stamps(FundamentalsRegionName)

@@ -4,12 +4,8 @@ from BaseClasses import ItemClassification
 
 from .id_handler import IDHandler
 
-from ..names.items import ItemName, \
-                          ItemSuffix, \
-                          BaseItemName, \
-                          DlcItemName
-
-from ..names.regions import RegionName
+from ..names.items import *
+from ..names.regions import *
 
 class ItemData:
     # This item's ID
@@ -96,7 +92,7 @@ class Items:
         :returns: The item data for this item
         """
 
-        return self.__items.get[name]
+        return self.__items.get(name)
 
     def get_data(
         self,
@@ -239,7 +235,7 @@ class Items:
                 ItemClassification.progression
             )
 
-    def __create_all() -> None:
+    def __create_all(self) -> None:
         """
         Creates all data for items.
         """
@@ -290,9 +286,9 @@ class Items:
         self.__create_data(BaseItemName.MEDAL_INTERMEDIATE,        ItemClassification.filler)
         self.__create_data(BaseItemName.MEDAL_ADVANCED,            ItemClassification.filler)
 
-        self.__create_all(BaseItemName.TIME_ATTACK_FUNDAMENTALS,   ItemClassification.progression)
-        self.__create_all(BaseItemName.TIME_ATTACK_INTERMEDIATE,   ItemClassification.progression)
-        self.__create_all(BaseItemName.TIME_ATTACK_ADVANCED,       ItemClassification.progression)
+        self.__create_data(BaseItemName.TIME_ATTACK_FUNDAMENTALS,   ItemClassification.progression)
+        self.__create_data(BaseItemName.TIME_ATTACK_INTERMEDIATE,   ItemClassification.progression)
+        self.__create_data(BaseItemName.TIME_ATTACK_ADVANCED,       ItemClassification.progression)
 
         ## Alps DLC
         # Flowers
@@ -322,12 +318,12 @@ class Items:
         self.__create_data(DlcItemName.IDOL_OF_SEEDS_2,           ItemClassification.progression)
 
         ## Extra items which can be randomised
-        self.__create_data(DlcItemName.TICKET_NORTHERN_RANGE,     ItemClassification.progression)
+        self.__create_data(BaseItemName.TICKET_NORTHERN_RANGE,     ItemClassification.progression)
 
-        self.__create_data(DlcItemName.BOOK_GALES_FUNDAMENTALS,   ItemClassification.progression)
-        self.__create_data(DlcItemName.BOOK_GALES_INTERMEDIATE,   ItemClassification.progression)
-        self.__create_data(DlcItemName.BOOK_GALES_ADVANCED,       ItemClassification.progression)
-        self.__create_data(DlcItemName.BOOK_NORTHERN_EXPERT,      ItemClassification.progression)
+        self.__create_data(BaseItemName.BOOK_GALES_FUNDAMENTALS,   ItemClassification.progression)
+        self.__create_data(BaseItemName.BOOK_GALES_INTERMEDIATE,   ItemClassification.progression)
+        self.__create_data(BaseItemName.BOOK_GALES_ADVANCED,       ItemClassification.progression)
+        self.__create_data(BaseItemName.BOOK_NORTHERN_EXPERT,      ItemClassification.progression)
         self.__create_data(DlcItemName.BOOK_ALPS_ESSENTIALS,      ItemClassification.progression)
         self.__create_data(DlcItemName.BOOK_ALPS_GREATS,          ItemClassification.progression)
         self.__create_data(DlcItemName.BOOK_ALPS_ARCTIC,          ItemClassification.progression)
