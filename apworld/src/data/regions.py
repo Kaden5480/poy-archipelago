@@ -1,11 +1,14 @@
 from enum import StrEnum
 from typing import Callable
 
+from worlds.generic.Rules import add_rule
+
 from BaseClasses import Entrance, \
                         Region
 
 from .items import PoYItemName
 from .locations import PoYLocationData, \
+                       PoYLocations, \
                        PeaksLocation
 
 class PoYRegionName(StrEnum):
@@ -169,15 +172,34 @@ alps_arctic: list[PoYRegionName] = [
     ALPS_MOUNT_MHORGORM,
 ]
 
+gales_all_peaks: list[PoYRegionName] = [
+    *gales_fundamentals,
+    *gales_intermediate,
+    *gales_advanced,
+]
+northern_all_peaks: list[PoYRegionName] = northern_expert
+alps_all_peaks: list[PoYRegionName] = [
+    *alps_essentials,
+    *alps_greats,
+    *alps_arctic,
+]
+
+base_all_peaks: list[PoYRegionName] = [
+    *gales_all_peaks,
+    *northern_all_peaks,
+]
+
+all_peaks: list[PoYRegionName] = [
+    *base_all_peaks,
+    *alps_all_peaks,
+]
 
 class PoYRegionData:
     id: int
     name: PoYRegionName
 
-    # Any regions which can be accessed from this region,
-    # including applicable access rules for being able
-    # to reach them
-    connections: dict[PoYRegionName, Callable[[object], bool] | None]
+    # Any regions which can be accessed from this region
+    connections: list[PoYRegionName]
 
     # Locations which are accessible within this region
     locations: list[PoYLocationData]
@@ -192,23 +214,20 @@ class PoYRegionData:
 
         self.id = id
         self.name = name
-        self.connections = {}
+        self.connections = []
         self.locations = []
 
     def add_connection(
         self,
         region_name: PoYRegionName,
-        rule: Callable[[object], bool] | None = None
     ) -> None:
         """
-        Adds a connection to a given region name,
-        with the provided rule to access it.
+        Adds a connection to a given region name
 
         :param region_name: The region to add a connection for
-        :param rule: The rule which locks this region, if any
         """
 
-        self.connections[region_name] = rule
+        self.connections.append(region_name)
 
     def add_location(self, location: PoYLocationData) -> None:
         """
@@ -218,6 +237,16 @@ class PoYRegionData:
         """
 
         self.locations.append(location)
+
+    def add_locations(self, locations: list[PoYLocationData]) -> None:
+        """
+        Adds locations to this region.
+
+        :param locations: The locations to add
+        """
+
+        for location in locations:
+            self.add_location(location)
 
     @staticmethod
     def create_cabin(
@@ -233,26 +262,23 @@ class PoYRegionData:
 
         :param id: The ID of the cabin
         :param name: The name of the cabin
-        :param categories: A tuple of (list[PoYRegionName], Callable)
-                           which indicates each category and the required
-                           book to access the category
+        :param categories: A list of list[PoYRegionName]
+                           which indicates each category
         :returns: The created cabin data
         """
 
-        connections = {}
+        connections = []
 
-        for regions, rule in categories:
-            connections.update({
-                region_name: rule
-                for region_name in regions
-            })
+        for regions in categories:
+            for region in regions:
+                connections.append(region)
 
         data = PoYRegionData(id, name)
         data.connections = connections
 
-
 class PoYRegions:
     handler: IDHandler
+    location_data: PoYLocations
 
     # Cabins
     gales_cabin: PoYRegionData
@@ -270,14 +296,16 @@ class PoYRegions:
     alps_greats: dict[PoYRegionName, PoYRegionData]
     alps_arctic: dict[PoYRegionName, PoYRegionData]
 
-    def __init__(self, handler: IDHandler) -> None:
+    def __init__(self, handler: IDHandler, location_data: PoYLocations) -> None:
         """
         Initializes PoYRegions.
 
         :param handler: The handler for assigning IDs to data
+        :param location_data: The data for locations
         """
 
         self.handler = handler
+        self.location_data = location_data
 
         ## Peaks
         # Great Gales
@@ -298,9 +326,12 @@ class PoYRegions:
         self.gales_cabin = PoYRegionData.create_cabin(
             handler.new_id(),
             PoYRegionName.GALES_CABIN,
-            (gales_fundamentals, lambda state: state.has(PoYItemName.BOOK_GALES_FUNDAMENTALS)),
-            (gales_intermediate, lambda state: state.has(PoYItemName.BOOK_GALES_INTERMEDIATE)),
-            (gales_advanced,     lambda state: state.has(PoYItemName.BOOK_GALES_ADVANCED))
+            (gales_fundamentals, lambda state: state.has(PoYItemName.BOOK_GALES_FUNDAMENTALS.value)),
+            (gales_intermediate, lambda state: state.has(PoYItemName.BOOK_GALES_INTERMEDIATE.value)),
+            (gales_advanced,     lambda state: state.has(PoYItemName.BOOK_GALES_ADVANCED.value))
+        )
+        self.gales_cabin.add_locations(
+            self.location_data.locations[PoYRegionName.GALES_CABIN]
         )
 
         # Gales cabin can always access the DLC
@@ -310,7 +341,7 @@ class PoYRegions:
         # access the northern cabin
         self.gales_cabin.add_connection(
             PoYRegionName.NORTHERN_CABIN,
-            lambda state: state.has(PoYItemName.TICKET_NORTHERN_RANGE)
+            lambda state: state.has(PoYItemName.BOOK_NORTHERN_EXPERT.value)
         )
 
         ### Northern Range
@@ -318,8 +349,11 @@ class PoYRegions:
             handler.new_id(),
             PoYRegionName.NORTHERN_CABIN,
             # Need the expert book and ice axes to be able to access bulwark + st
-            (northern_expert, lambda state: state.has(PoYItemName.BOOK_NORTHERN_EXPERT) \
-                    and state.has(PoYItemName.TOOLS_ICE_AXES))
+            (northern_expert, lambda state: state.has(PoYItemName.BOOK_NORTHERN_EXPERT.value) \
+                    and state.has(PoYItemName.TOOLS_ICE_AXES.value))
+        )
+        self.northern_cabin.add_locations(
+            self.locaion_data.locations[PoYRegionName.NORTHERN_CABIN]
         )
 
         # Northern cabin can always access the DLC
@@ -329,10 +363,13 @@ class PoYRegions:
         self.alps_cabin = PoYRegionData.create_cabin(
             handler.new_id(),
             PoYRegionName.ALPS_CABIN,
-            (alps_essentials, lambda state: state.has(PoYItemName.BOOK_ALPS_ESSENTIALS)),
-            (alps_greats,     lambda state: state.has(PoYItemName.BOOK_ALPS_GREATS)),
-            (alps_arctic,     lambda state: state.has(PoYItemName.BOOK_ALPS_ARCTIC) \
-                    and state.has(PoYItemName.TOOLS_ICE_AXES))
+            (alps_essentials, lambda state: state.has(PoYItemName.BOOK_ALPS_ESSENTIALS.value)),
+            (alps_greats,     lambda state: state.has(PoYItemName.BOOK_ALPS_GREATS.value)),
+            (alps_arctic,     lambda state: state.has(PoYItemName.BOOK_ALPS_ARCTIC.value) \
+                    and state.has(PoYItemName.TOOLS_ICE_AXES.value))
+        )
+        self.alps_cabin.add_locations(
+            self.location_data.locations[PoYRegionName.ALPS_CABIN]
         )
 
         # Alps cabin can always access the Gales cabin
@@ -350,10 +387,14 @@ class PoYRegions:
         :returns: The mappings
         """
 
-        return {
-            name: PoYRegionData(self.handler.new_id(), name)
-            for name in category
-        }
+        mappings = {}
+
+        for name in category:
+            data = PoYRegionData(self.handler.new_id(), name)
+            data.add_locations(self.location_data.locations[name])
+            mappings[name] = data
+
+        return mappings
 
 
 class PeaksRegion(Region):
@@ -388,25 +429,10 @@ class PeaksRegion(Region):
         Creates all locations for this region.
         """
 
-        for data in self.poy_data.locations:
+        for data in self.poy_data.location_data:
             location = PeaksLocation(
                 data, world.player, data.name, self
             )
             location.poy_create_item(world)
 
             self.locations.append(location)
-
-    def poy_set_rules(self) -> None:
-        """
-        Sets access rules for entrance randomisation.
-        """
-
-        # Set region access rules
-        for region_name, rule in self.poy_data.connections.items():
-            if rule is None:
-                continue
-
-            add_rule(
-                self.poy_connections[region_name],
-                rule
-            )
