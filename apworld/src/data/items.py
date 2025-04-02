@@ -37,7 +37,7 @@ class ItemData:
 
 class Items:
     handler: IDHandler
-    data: dict[str, ItemData]
+    items: dict[str, ItemData]
 
     def __init__(self, handler: IDHandler) -> None:
         """
