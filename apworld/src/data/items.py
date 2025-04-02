@@ -3,6 +3,7 @@ from enum import StrEnum
 from BaseClasses import ItemClassification
 
 from .id_handler import IDHandler
+
 from ..names.items import ItemName, \
                           BaseItemName, \
                           DlcItemName
