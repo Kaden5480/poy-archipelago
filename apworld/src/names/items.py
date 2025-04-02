@@ -54,12 +54,6 @@ class BaseItemName(StrEnum):
     BOOK_GALES_ADVANCED       = "Advanced Book"
     BOOK_NORTHERN_EXPERT      = "Expert Book"
 
-    # Stamps for each category of peaks
-    STAMP_GALES_FUNDAMENTALS  = "Fundamentals Stamp"
-    STAMP_GALES_INTERMEDIATE  = "Intermediate Stamp"
-    STAMP_GALES_ADVANCED      = "Advanced Stamp"
-    STAMP_NORTHERN_EXPERT     = "Expert Stamp"
-
 
 class DlcItemName(StrEnum):
     """
@@ -96,11 +90,16 @@ class DlcItemName(StrEnum):
     BOOK_ALPS_GREATS          = "Alpine Greats Book"
     BOOK_ALPS_ARCTIC          = "Arduous and Arctic Book"
 
-    # Stamps for each category of peaks
-    STAMP_ALPS_ESSENTIALS     = "Essentials Stamp"
-    STAMP_ALPS_GREATS         = "Alpine Greats Stamp"
-    STAMP_ALPS_ARCTIC         = "Arduous and Arctic Stamp"
+
+class ItemSuffix(StrEnum):
+    """
+    Items which are generated based
+    upon suffixes instead.
+    """
+
+    STAMP           = "Stamp"
+    STAMP_FREE_SOLO = "Stamp (Free Solo)"
 
 
-# All item names
+# All item names, excluding suffixes
 ItemName = BaseItemName | DlcItemName
