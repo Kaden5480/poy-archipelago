@@ -9,6 +9,7 @@ from ..names.regions import *
 class LocationData:
     __id: int
     __name: str
+    __region: str
     __item_name: str
     __progress_type: LocationProgressType
 
@@ -16,6 +17,7 @@ class LocationData:
         self,
         id: int,
         name: str,
+        region: str,
         item_name: str,
         progress_type: LocationProgressType
     ) -> None:
@@ -24,12 +26,14 @@ class LocationData:
 
         :param id: The ID of this location
         :param name: The name of this location
+        :param region: The region this location is from
         :param item_name: The item locked behind this location (or dropped by it)
         :param progress_type: The progress type for this location
         """
 
         self.__id = id
         self.__name = name
+        self.__region = region
         self.__item_name = item_name
         self.__progress_type = progress_type
 
@@ -40,6 +44,10 @@ class LocationData:
     @property
     def name(self) -> str:
         return self.__name
+
+    @property
+    def region(self) -> str:
+        return self.__region
 
     @property
     def item_name(self) -> str:
@@ -68,6 +76,15 @@ class Locations:
 
         self.__create_all()
 
+    def __iter__(self) -> Iterable[LocationData]:
+        """
+        Supports iterating over this object to
+        get data for all locations.
+        """
+
+        for data in self.__locations.values():
+            yield data
+
     @property
     def count() -> int:
         """
@@ -76,18 +93,31 @@ class Locations:
 
         return len(self.__locations)
 
-    def get_data(
+    def get_data_str(
         self,
-        name: LocationName
-    ) -> LocationData | None:
+        name: str
+    ) -> LocationData:
         """
         Gets data for a location by a given name.
 
         :param name: The name of the location to get data for
-        :returns: The location data, or None if not found
+        :returns: The location data
         """
 
-        return self.__locations.get(name.value, None)
+        return self.__locations[name]
+
+    def get_data(
+        self,
+        name: LocationName
+    ) -> LocationData:
+        """
+        Gets data for a location by a given name.
+
+        :param name: The name of the location to get data for
+        :returns: The location data
+        """
+
+        return self.get_data_str(name.value)
 
     def get_data_suffix(
         self,
@@ -123,6 +153,40 @@ class Locations:
         return self.__region_to_locations.get(
             region.value, []
         )
+
+    def get_data_time_attack(
+        self,
+        peak: PeakName
+    ) -> LocationData | None:
+        """
+        Gets the location data of a time attack for
+        a given peak.
+
+        :param peak: The peak to get the time attack for
+        :returns: The time attack for this peak, or None if not found
+        """
+
+        return self.get_data_suffix(LocationSuffix.TIME_ATTACK, peak)
+
+    def get_data_time_attacks(
+        self,
+        category: type[PeakName]
+    ) -> list[LocationData]:
+        """
+        Gets location data for all time attacks in
+        a given category.
+
+        :param category: The category of peaks to get time attacks for
+        :returns: All time attacks for this category
+        """
+
+        time_attacks = []
+
+        for peak in category:
+            if (time_attack := self.get_data_time_attack(peak)) is not None:
+                time_attacks.append(time_attack)
+
+        return time_attacks
 
     def get_data_stamp(
         self,
@@ -181,7 +245,7 @@ class Locations:
         # Create the data
         data = LocationData(
             self.__handler.new_id(), name,
-            item_name, progress_type
+            region, item_name, progress_type
         )
 
         # If this region has no list of locations yet,

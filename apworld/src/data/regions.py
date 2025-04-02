@@ -1,3 +1,5 @@
+from typing import Iterable
+
 from .id_handler import IDHandler
 
 from ..names.regions import RegionName, \
@@ -49,10 +51,19 @@ class Regions:
         self.__handler = handler
         self.__regions = {}
 
-    def get_data(
+    def __iter__(self) -> Iterable[RegionData]:
+        """
+        Supports iterating over this object to
+        get data for all regions.
+        """
+
+        for data in self.__regions.values():
+            return data
+
+    def get_data_str(
         self,
-        name: RegionName
-    ) -> None:
+        name: str
+    ) -> RegionData:
         """
         Gets the region data for a given region.
 
@@ -60,7 +71,20 @@ class Regions:
         :returns: The region's data
         """
 
-        return self.__regions[region.value]
+        return self.__regions[name]
+
+    def get_data(
+        self,
+        name: RegionName
+    ) -> RegionData:
+        """
+        Gets the region data for a given region.
+
+        :param name: The name of the region to get data for
+        :returns: The region's data
+        """
+
+        return self.get_data_str(name.value)
 
     def get_data_for_category(
         self,

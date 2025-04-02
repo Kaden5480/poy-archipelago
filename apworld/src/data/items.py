@@ -1,3 +1,5 @@
+from typing import Iterable
+
 from BaseClasses import ItemClassification
 
 from .id_handler import IDHandler
@@ -74,6 +76,28 @@ class Items:
 
         return len(self.__items)
 
+    def __iter__(self) -> Iterable[ItemData]:
+        """
+        Supports iterating over this object to get
+        data for all items.
+        """
+
+        for data in self.__items.values():
+            yield data
+
+    def get_data_str(
+        self,
+        name: str
+    ) -> ItemData:
+        """
+        Gets data for a given item by its name.
+
+        :param name: The name of the item to get the data for
+        :returns: The item data for this item
+        """
+
+        return self.__items.get[name]
+
     def get_data(
         self,
         name: ItemName
@@ -85,7 +109,7 @@ class Items:
         :returns: The item's data
         """
 
-        return self.__items.get[name.value]
+        return self.get_data_str(name.value)
 
     def get_data_suffix(
         self,
