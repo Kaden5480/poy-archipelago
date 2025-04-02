@@ -105,7 +105,7 @@ class Items:
             None
         )
 
-    def get_stamp(
+    def get_data_stamp(
         self,
         peak: PeakName
     ) -> ItemData | None:
@@ -118,7 +118,7 @@ class Items:
 
         self.get_data_suffix(ItemSuffix.STAMP, peak)
 
-    def get_stamps(
+    def get_data_stamps(
         self,
         category: type[PeakName]
     ) -> list[ItemData]:
@@ -132,7 +132,7 @@ class Items:
         stamps = []
 
         for peak in category:
-            if (stamp := self.get_stamp(peak)) is not None:
+            if (stamp := self.get_data_stamp(peak)) is not None:
                 stamps.append(stamp)
 
         return stamps

@@ -141,7 +141,7 @@ class Locations:
             region.value, []
         )
 
-    def get_stamp(
+    def get_data_stamp(
         self,
         peak: PeakName
     ) -> LocationData | None:
@@ -154,7 +154,7 @@ class Locations:
 
         return self.get_data_suffix(LocationSuffix.STAMP, peak)
 
-    def get_stamps(
+    def get_data_stamps(
         self,
         category: type[PeakName]
     ) -> list[LocationData]:
@@ -169,7 +169,7 @@ class Locations:
         stamps = []
 
         for peak in category:
-            if (stamp := self.get_stamp(peak)) is not None:
+            if (stamp := self.get_data_stamp(peak)) is not None:
                 stamps.append(stamp)
 
         return stamps
