@@ -12,7 +12,7 @@ class ItemData:
     id: int
 
     # The name of the item
-    name: ItemName
+    name: str
 
     # The item's classification
     classification: ItemClassification
@@ -20,7 +20,7 @@ class ItemData:
     def __init__(
         self,
         id: int,
-        name: ItemName,
+        name: str,
         classification: ItemClassification
     ) -> None:
         """
@@ -38,7 +38,7 @@ class ItemData:
 
 class Items:
     handler: IDHandler
-    data: dict[ItemName, ItemData]
+    data: dict[str, ItemData]
 
     def __init__(self, handler: IDHandler) -> None:
         """
@@ -149,19 +149,19 @@ class Items:
         :param classification: The classification of the item
         """
 
-        self.items[name] = ItemData(
-            self.handler.new_id(), name, classification
+        self.items[name.value] = ItemData(
+            self.handler.new_id(), name.value, classification
         )
 
     def get_data(
         self,
         name: ItemName
-    ) -> ItemData:
+    ) -> ItemData | None:
         """
         Gets data for a given item name.
 
         :param name: The name of the item to get the data for
-        :returns: The item's data
+        :returns: The item's data, or None if no data was found
         """
 
-        return self.items[name]
+        return self.items.get(name.value, None)
