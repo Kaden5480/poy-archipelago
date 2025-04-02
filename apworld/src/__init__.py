@@ -1,4 +1,5 @@
-from typing import Callable
+from typing import Callable, \
+                   ClassVar
 
 from worlds.AutoWorld import World
 from BaseClasses import CollectionState, \
@@ -16,6 +17,7 @@ from .names.regions import *
 from .names.items import *
 
 from .rules import Rules
+from .options import PeaksOptions
 
 GAME: str = "Peaks of Yore"
 
@@ -34,8 +36,8 @@ class PeaksRegion(Region):
 
     def poy_connect(
         self,
-        region: PeaksRegion,
-        rule: Callable[[CollectionState], bool] | None
+        region: "PeaksRegion",
+        rule: Callable[[CollectionState], bool] | None = None
     ) -> None:
         """
         Connects this region to another region.
@@ -78,13 +80,17 @@ class PeaksWorld(World):
     options_dataclass = PeaksOptions
     options: PeaksOptions
 
-    poy_data: DataStore
+    poy_data: ClassVar[DataStore] = DataStore()
+
+    # Required by AP
+    item_name_to_id: ClassVar[dict[str, int]] = {item.name: item.id for item in poy_data.items}
+    location_name_to_id: ClassVar[dict[str, int]] = {location.name: location.id for location in poy_data.locations}
+
     poy_rules: Rules
 
     poy_created_regions: dict[RegionName, PeaksRegion] = {}
 
     def __init__(self, *args, **kwargs) -> None:
-        self.poy_data = DataStore()
         self.poy_rules = Rules(self.poy_data, self)
 
         super().__init__(*args, **kwargs)
@@ -141,10 +147,10 @@ class PeaksWorld(World):
         """
 
         # Get the name of the category
-        category_name = getattr(RegionName, "CATEGORY")
+        category_name = getattr(category, "CATEGORY")
 
         # Get the category region itself
-        category_region = regions[category_name]
+        category_region = self.poy_get_region(category_name)
 
         for peak in category:
             # Don't link the category to itself
@@ -260,7 +266,6 @@ class PeaksWorld(World):
         )
 
     # Overrides
-    @override
     def generate_early(self) -> None:
         """
         Early generation of the world.
@@ -277,7 +282,6 @@ class PeaksWorld(World):
             self.create_item(DlcItemName.BOOK_ALPS_ESSENTIALS.value)
         )
 
-    @override
     def create_regions(self) -> None:
         """
         Creates all regions and the connections between them.
@@ -314,8 +318,16 @@ class PeaksWorld(World):
         # categories/cabins
         self.poy_connect_cabins()
 
+        # Create the menu region
+        menu_region = PeaksRegion(
+            "Menu", self.player,
+            self.multiworld
+        )
+        self.poy_created_regions["Menu"] = menu_region
 
-    @override
+        # Connect the menu to the Gales Cabin
+        menu_region.poy_connect(self.poy_get_region(CabinRegionName.GALES))
+
     def create_item(self, name: str) -> PeaksItem:
         """
         Creates an item on demand given its name.
@@ -330,7 +342,6 @@ class PeaksWorld(World):
             item.id, self.player
         )
 
-    @override
     def create_items(self) -> None:
         """
         Creates all items, adding them to the world's item pool.
@@ -339,14 +350,12 @@ class PeaksWorld(World):
         for data in self.poy_data.items:
             item = self.create_item(data.name)
 
-    @override
     def set_rules(self) -> None:
         """
         Sets access rules on entrances, locations,
         and items to try to mitigate soft locks.
         """
 
-    @override
     def connect_entrances(self) -> None:
         """
         Performs entrance randomisation.
