@@ -105,6 +105,19 @@ class Items:
             None
         )
 
+    def get_stamp(
+        self,
+        peak: PeakName
+    ) -> ItemData | None:
+        """
+        Gets the stamp for a given peak.
+
+        :param peak: The peak to get the stamp item for
+        :returns: The stamp if found, None otherwise
+        """
+
+        self.get_data_suffix(ItemSuffix.STAMP, peak)
+
     def get_stamps(
         self,
         category: type[PeakName]
@@ -118,12 +131,8 @@ class Items:
 
         stamps = []
 
-        for region in category:
-            stamp = self.get_data_suffix(
-                ItemSuffix.STAMP, region
-            )
-
-            if stamp is not None:
+        for peak in category:
+            if (stamp := self.get_stamp(peak)) is not None:
                 stamps.append(stamp)
 
         return stamps
@@ -137,6 +146,11 @@ class Items:
         Creates data for an item with the given name
         and classification, adding it to the
         dictionary of items.
+
+        NOTE: This method should not be accessed directly in
+        __create_all.
+        It should be accessed through methods like __create_data
+        or __create_data_suffix.
 
         :param name: The name of the item
         :param classification: The classification of the item

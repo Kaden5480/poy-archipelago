@@ -73,7 +73,7 @@ class Regions:
         :returns: A list of all region data for this category
         """
 
-        return [self.get_data(region) for region in category]
+        return [self.get_data(peak) for peak in category]
 
     def __create_data(
         self,

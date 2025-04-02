@@ -141,6 +141,19 @@ class Locations:
             region.value, []
         )
 
+    def get_stamp(
+        self,
+        peak: PeakName
+    ) -> LocationData | None:
+        """
+        Gets location data of a stamp for a given peak.
+
+        :param peak: The peak to get the stamp for
+        :returns: The stamp for this peak, or None if not found
+        """
+
+        return self.get_data_suffix(LocationSuffix.STAMP, peak)
+
     def get_stamps(
         self,
         category: type[PeakName]
@@ -155,13 +168,8 @@ class Locations:
 
         stamps = []
 
-        for region in category:
-            stamp = self.get_data_suffix(
-                LocationSuffix.STAMP,
-                region
-            )
-
-            if stamp is not None:
+        for peak in category:
+            if (stamp := self.get_stamp(peak)) is not None:
                 stamps.append(stamp)
 
         return stamps
