@@ -238,7 +238,7 @@ class PeaksWorld(World):
         cabin_northern.poy_connect(cabin_gales)
 
         # The northern cabin has one-way access to the alps
-        cabin_northern.poy_connect(cabin_northern)
+        cabin_northern.poy_connect(cabin_alps)
 
         # The gales cabin always has access to the DLC
         # and vice versa
