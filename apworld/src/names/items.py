@@ -6,53 +6,62 @@ class BaseItemName(StrEnum):
     """
 
     # Artefacts
-    HAT_1                     = "Hat #1"
-    HAT_2                     = "Hat #2"
-    SHOE                      = "Shoe"
-    SLEEPING_BAG              = "Sleeping Bag"
-    SAFETY_HELMET             = "Safety Helmet"
-    BACKPACK                  = "Backpack"
-    SHOVEL                    = "Shovel"
+    HAT_1                   = "Hat #1"
+    HAT_2                   = "Hat #2"
+    SHOE                    = "Shoe"
+    SLEEPING_BAG            = "Sleeping Bag"
+    SAFETY_HELMET           = "Safety Helmet"
+    BACKPACK                = "Backpack"
+    SHOVEL                  = "Shovel"
 
-    PICTURE_FRAGMENT          = "Picture Fragment"
-    PICTURE_FRAME             = "Picture Frame"
+    PICTURE_FRAGMENT        = "Picture Fragment"
+    PICTURE_FRAME           = "Picture Frame"
 
-    STATUE_FUNDAMENTALS       = "Fundamental Statue"
-    STATUE_INTERMEDIATE       = "Intermediate Statue"
-    STATUE_ADVANCED           = "Advanced Statue"
-    STATUE_EXPERT             = "Expert Statue"
+    STATUE_FUNDAMENTALS     = "Fundamental Statue"
+    STATUE_INTERMEDIATE     = "Intermediate Statue"
+    STATUE_ADVANCED         = "Advanced Statue"
+    STATUE_EXPERT           = "Expert Statue"
 
     # Consumables
-    BIRD_SEEDS                = "Bird Seeds +1"
-    CHALK                     = "Chalk +2"
-    COFFEE_2                  = "Coffee +2"
-    COFFEE_5                  = "Coffee +5"
-    ROPES_1                   = "Rope +1"
-    ROPES_2                   = "Rope +2"
+    BIRD_SEEDS              = "Bird Seeds +1"
+    CHALK_2                 = "Chalk +2"
+    COFFEE_2                = "Coffee +2"
+    COFFEE_5                = "Coffee +5"
+    ROPES_1                 = "Rope +1"
+    ROPES_2                 = "Rope +2"
 
     # Tools
-    TOOL_ARTEFACT_MAP         = "Artefact Map"
-    TOOL_BAROMETER            = "Barometer"
-    TOOL_CHALK_BAG            = "Chalk Bag"
-    TOOL_COFFEE               = "Coffee"
-    TOOL_CRAMPONS_6           = "Crampons (6 Point)"
-    TOOL_CRAMPONS_10          = "Crampons (10 Point)"
-    TOOL_ICE_AXES             = "Ice Axes"
-    TOOL_MONOCULAR            = "Monocular"
-    TOOL_PHONOGRAPH           = "Phonograph"
-    TOOL_PIPE                 = "Pipe"
-    TOOL_POCKETWATCH          = "Pocketwatch"
-    TOOL_ROPE                 = "Rope"
-    TOOL_ROPE_DOUBLE          = "Rope (Double Length)"
+    TOOL_ARTEFACT_MAP       = "Artefact Map"
+    TOOL_BAROMETER          = "Barometer"
+    TOOL_CHALK_BAG          = "Chalk Bag"
+    TOOL_COFFEE             = "Coffee Unlock"
+    TOOL_CRAMPONS_6         = "Crampons (6 Point)"
+    TOOL_CRAMPONS_10        = "Crampons (10 Point)"
+    TOOL_ICE_AXES           = "Ice Axes"
+    TOOL_MONOCULAR          = "Monocular"
+    TOOL_PHONOGRAPH         = "Phonograph"
+    TOOL_PIPE               = "Pipe"
+    TOOL_POCKETWATCH        = "Pocketwatch"
+    TOOL_ROPE               = "Rope Unlock"
+    TOOL_ROPE_DOUBLE        = "Rope (Double Length)"
+
+    # Infinite from getting all artefacts
+    TOOL_INFINITE_CHALK     = "Infinite Chalk"
+    TOOL_INFINITE_COFFEE    = "Infinite Coffee"
+
+    # Medals for completing all peaks
+    MEDAL_FUNDAMENTALS      = "Fundamentals Medal"
+    MEDAL_INTERMEDIATE      = "Intermediate Medal"
+    MEDAL_ADVANCED          = "Advanced Medal"
 
     # Ticket to access the northern cabin
-    TICKET_NORTHERN_RANGE     = "Northern Range Ticket"
+    TICKET_NORTHERN_RANGE   = "Northern Range Ticket"
 
     # The books to access each category
-    BOOK_GALES_FUNDAMENTALS   = "Fundamentals Book"
-    BOOK_GALES_INTERMEDIATE   = "Intermediate Book"
-    BOOK_GALES_ADVANCED       = "Advanced Book"
-    BOOK_NORTHERN_EXPERT      = "Expert Book"
+    BOOK_GALES_FUNDAMENTALS = "Fundamentals Book"
+    BOOK_GALES_INTERMEDIATE = "Intermediate Book"
+    BOOK_GALES_ADVANCED     = "Advanced Book"
+    BOOK_NORTHERN_EXPERT    = "Expert Book"
 
 
 class DlcItemName(StrEnum):

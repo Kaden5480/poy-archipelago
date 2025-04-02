@@ -238,7 +238,7 @@ class Items:
 
         # Consumables
         self.__create_data(BaseItemName.BIRD_SEEDS,                ItemClassification.filler)
-        self.__create_data(BaseItemName.CHALK,                     ItemClassification.useful | ItemClassification.progression)
+        self.__create_data(BaseItemName.CHALK_2,                   ItemClassification.useful | ItemClassification.progression)
         self.__create_data(BaseItemName.COFFEE_2,                  ItemClassification.useful | ItemClassification.progression)
         self.__create_data(BaseItemName.COFFEE_5,                  ItemClassification.filler)
         self.__create_data(BaseItemName.ROPES_1,                   ItemClassification.filler)
@@ -258,6 +258,13 @@ class Items:
         self.__create_data(BaseItemName.TOOL_POCKETWATCH,          ItemClassification.useful | ItemClassification.progression)
         self.__create_data(BaseItemName.TOOL_ROPE,                 ItemClassification.useful)
         self.__create_data(BaseItemName.TOOL_ROPE_DOUBLE,          ItemClassification.useful)
+
+        self.__create_data(BaseItemName.TOOL_INFINITE_CHALK,       ItemClassification.useful)
+        self.__create_data(BaseItemName.TOOL_INFINITE_COFFEE,      ItemClassification.useful)
+
+        self.__create_data(BaseItemName.MEDAL_FUNDAMENTALS,        ItemClassification.filler)
+        self.__create_data(BaseItemName.MEDAL_INTERMEDIATE,        ItemClassification.filler)
+        self.__create_data(BaseItemName.MEDAL_ADVANCED,            ItemClassification.filler)
 
         ## Alps DLC
         # Flowers
