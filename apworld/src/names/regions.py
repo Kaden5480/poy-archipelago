@@ -15,6 +15,8 @@ class FundamentalsRegionName(StrEnum):
     The names of all fundamentals peaks.
     """
 
+    CATEGORY          = "Fundamentals"
+
     GREENHORNS_TOP    = "Greenhorn's Top"
     PALTRY_PEAK       = "Paltry Peak"
     OLD_MILL          = "Old Mill"
@@ -42,6 +44,8 @@ class IntermediateRegionName(StrEnum):
     The names of all intermediate peaks.
     """
 
+    CATEGORY           = "Intermediate"
+
     PORTERS_BOULDER    = "Porter's Boulder"
     JOTUNNS_THUMB      = "Jotunn's Thumb"
     OLD_SKERRY         = "Old Skerry"
@@ -59,6 +63,8 @@ class AdvancedRegionName(StrEnum):
     The names of all advanced peaks.
     """
 
+    CATEGORY       = "Advanced"
+
     WALKERS_PILLAR = "Walker's Pillar"
     GREAT_GAOL     = "Great Gaol"
     ELDENHORN      = "Eldenhorn"
@@ -71,6 +77,8 @@ class ExpertRegionName(StrEnum):
     The names of all expert peaks.
     """
 
+    CATEGORY       = "Expert"
+
     GREAT_BULWARK  = "Great Bulwark"
     SOLEMN_TEMPEST = "Solemn Tempest"
 
@@ -79,6 +87,8 @@ class EssentialsRegionName(StrEnum):
     """
     The names of all essentials peaks.
     """
+
+    CATEGORY                = "Essentials"
 
     TUTORS_TOWER            = "Tutor's Tower"
     STOUGR_BOULDER          = "Stougr Boulder"
@@ -99,6 +109,8 @@ class GreatsRegionName(StrEnum):
     The names of all alpine greats peaks.
     """
 
+    CATEGORY      = "Alpine Greats"
+
     EINVALD_FALLS = "Einvald Falls"
     ALMATTR_DAM   = "Almáttr Dam"
     DUNDERHORN    = "Dunderhorn"
@@ -110,6 +122,8 @@ class ArcticRegionName(StrEnum):
     """
     The names of all arduous and arctic peaks.
     """
+
+    CATEGORY       = "Arduous and Arctic"
 
     SEIGR_CRAEG    = "Seigr Craeg"
     ULLRS_CHASM    = "Ullr's Chasm"
@@ -132,6 +146,9 @@ AlpsPeakName = EssentialsRegionName \
 # Base and DLC peak groupings
 BasePeakName = GalesPeakName | NorthernPeakName
 DlcPeakName = AlpsPeakName
+
+# All peaks
+PeakName = BasePeakName | DlcPeakName
 
 # Everything
 RegionName = CabinName | BasePeakName | DlcPeakName
