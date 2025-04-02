@@ -79,9 +79,30 @@ class BaseLocationName(StrEnum):
     TOOL_PIPE                         = BaseItemName.TOOL_PIPE
     TOOL_POCKETWATCH                  = BaseItemName.TOOL_POCKETWATCH
     TOOL_ROPE                         = BaseItemName.TOOL_ROPE
-    TOOL_ROPE_DOUBLE                  = BaseItemName.TOOL_ROPE_DOUBLE
 
-    # Symbolic locations
+    ALL_PICTURES_ROPE_DOUBLE          = "All Picture Pieces (Double Length Ropes)"
+
+    # All artefacts
+    ALL_ARTEFACTS_INFINITE_COFFEE     = "All Artefacts (Infinite Coffee)"
+    ALL_ARTEFACTS_INFINITE_CHALK      = "All Artefacts (Infinite Chalk)"
+    ALL_ARTEFACTS_ROPES               = "All Artefacts (Rope)"
+
+    # All of each category
+    ALL_FUNDAMENTALS_MEDAL            = "All Fundamentals (Medal)"
+    ALL_FUNDAMENTALS_ROPES            = "All Fundamentals (Ropes)"
+    ALL_FUNDAMENTALS_CHALK            = "All Fundamentals (Chalk)"
+    ALL_FUNDAMENTALS_COFFEE           = "All Fundamentals (Coffee)"
+
+    ALL_INTERMEDIATE_MEDAL            = "All Intermediate (Medal)"
+    ALL_INTERMEDIATE_ROPES            = "All Intermediate (Ropes)"
+    ALL_INTERMEDIATE_CHALK            = "All Intermediate (Chalk)"
+    ALL_INTERMEDIATE_COFFEE           = "All Intermediate (Coffee)"
+
+    ALL_ADVANCED_MEDAL                = "All Advanced (Medal)"
+    ALL_ADVANCED_ROPES                = "All Advanced (Ropes)"
+    ALL_ADVANCED_CHALK                = "All Advanced (Chalk)"
+    ALL_ADVANCED_COFFEE               = "All Advanced (Coffee)"
+
     TICKET_NORTHERN_RANGE             = BaseItemName.TICKET_NORTHERN_RANGE
 
     BOOK_GALES_FUNDAMENTALS           = BaseItemName.BOOK_GALES_FUNDAMENTALS
@@ -147,9 +168,10 @@ class LocationSuffix(StrEnum):
     upon suffixes instead.
     """
 
+    TIME_ATTACK     = "Time Attack"
     STAMP           = ItemSuffix.STAMP
     STAMP_FREE_SOLO = ItemSuffix.STAMP_FREE_SOLO
 
 
 # Location names excluding suffixes
-LocationName = BaseLocationName| DlcLocationName
+LocationName = BaseLocationName | DlcLocationName

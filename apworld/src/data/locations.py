@@ -2,26 +2,9 @@ from BaseClasses import LocationProgressType
 
 from .id_handler import IDHandler
 
-from ..names.items import ItemName, \
-                          ItemSuffix, \
-                          BaseItemName, \
-                          DlcItemName
-
-from ..names.locations import LocationName, \
-                              BaseLocationName, \
-                              DlcLocationName, \
-                              LocationSuffix
-
-from ..names.regions import RegionName, \
-                            CabinRegionName, \
-                            PeakName, \
-                            FundamentalsRegionName, \
-                            IntermediateRegionName, \
-                            AdvancedRegionName, \
-                            ExpertRegionName, \
-                            EssentialsRegionName, \
-                            GreatsRegionName, \
-                            ArcticRegionName
+from ..names.items import *
+from ..names.locations import *
+from ..names.regions import *
 
 class LocationData:
     __id: int
@@ -273,6 +256,31 @@ class Locations:
                 LocationSuffix.STAMP,
                 region,
                 ItemSuffix.STAMP,
+                LocationProgressType.PRIORITY
+            )
+
+    def __create_time_attack(
+        self,
+        category: type[PeakName],
+        item: ItemName
+    ) -> None:
+        """
+        Creates all time attacks for a given category
+        of peaks.
+
+        :param category: The category to create time attacks for
+        :param item: The time attack item
+        """
+
+        for region in category:
+            # Ignore the category
+            if region.name == "CATEGORY":
+                continue
+
+            self.__create_data_str(
+                f"{region.value} {LocationSuffix.TIME_ATTACK}",
+                region.value,
+                item.value,
                 LocationProgressType.PRIORITY
             )
 
@@ -537,6 +545,73 @@ class Locations:
             AdvancedRegionName.ST_HAELGA,
             BaseItemName.ROPES_1,
             LocationProgressType.EXCLUDED
+        )
+
+        # All of each category
+        # All fundamentals
+        self.__create_data(
+            BaseLocationName.ALL_FUNDAMENTALS_MEDAL,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.MEDAL_FUNDAMENTALS,
+        )
+        self.__create_data(
+            BaseLocationName.ALL_FUNDAMENTALS_ROPES,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.ROPES_2,
+        )
+        self.__create_data(
+            BaseLocationName.ALL_FUNDAMENTALS_CHALK,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.CHALK,
+        )
+        self.__create_data(
+            BaseLocationName.ALL_FUNDAMENTALS_COFFEE,
+            FundamentalsRegionName.CATEGORY,
+            BaseItemName.COFFEE_2,
+        )
+
+        # All intermediate
+        self.__create_data(
+            BaseLocationName.ALL_INTERMEDIATE_MEDAL,
+            IntermediateRegionName.CATEGORY,
+            BaseItemName.MEDAL_INTERMEDIATE,
+        )
+        self.__create_data(
+            BaseLocationName.ALL_INTERMEDIATE_ROPES,
+            IntermediateRegionName.CATEGORY,
+            BaseItemName.ROPES_2,
+        )
+        self.__create_data(
+            BaseLocationName.ALL_INTERMEDIATE_CHALK,
+            IntermediateRegionName.CATEGORY,
+            BaseItemName.CHALK,
+        )
+        self.__create_data(
+            BaseLocationName.ALL_INTERMEDIATE_COFFEE,
+            IntermediateRegionName.CATEGORY,
+            BaseItemName.COFFEE_2,
+        )
+
+        # All advanced
+        self.__create_data(
+            BaseLocationName.ALL_ADVANCED_MEDAL,
+            AdvancedRegionName.CATEGORY,
+            BaseItemName.MEDAL_ADVANCED,
+        )
+        self.__create_data(
+            BaseLocationName.ALL_ADVANCED_ROPES,
+            AdvancedRegionName.CATEGORY,
+            BaseItemName.ROPES_2,
+        )
+        self.__create_data(
+            BaseLocationName.ALL_ADVANCED_CHALK,
+            AdvancedRegionName.CATEGORY,
+            BaseItemName.CHALK,
+        )
+        self.__create_data(
+            BaseLocationName.ALL_ADVANCED_COFFEE,
+            AdvancedRegionName.CATEGORY,
+            BaseItemName.COFFEE_2,
         )
 
         # Tools
@@ -907,6 +982,12 @@ class Locations:
             DlcItemName.BOOK_ALPS_ARCTIC,
             LocationProgressType.PRIORITY
         )
+
+        # Create time attack locations for peaks in each category
+        # TODO: Add more later
+        self.__create_time_attack(FundamentalsRegionName, ItemName.TIME_ATTACK_FUNDAMENTALS)
+        self.__create_time_attack(IntermediateRegionName, ItemName.TIME_ATTACK_INTERMEDIATE)
+        self.__create_time_attack(AdvancedRegionName,     ItemName.TIME_ATTACK_ADVANCED)
 
         # Create stamp locations for all peaks in each category
         self.__create_stamps(FundamentalsRegionName)
