@@ -54,7 +54,7 @@ class Locations:
 
     def __init__(self, handler: IDHandler) -> None:
         """
-        Initializes a PoYLocations object.
+        Initializes a Locations object.
 
         :param handler: The handler to assign IDs with
         """
