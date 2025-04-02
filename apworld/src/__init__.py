@@ -269,6 +269,14 @@ class PeaksWorld(World):
         precollected items where necessary
         """
 
+        # Access to the fundamentals and essentials book is a given
+        self.multiworld.push_precollected(
+            self.create_item(BaseItemName.BOOK_GALES_FUNDAMENTALS.value)
+        )
+        self.multiworld.push_precollected(
+            self.create_item(DlcItemName.BOOK_ALPS_ESSENTIALS.value)
+        )
+
     @override
     def create_regions(self) -> None:
         """
