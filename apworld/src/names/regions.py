@@ -71,8 +71,8 @@ class ExpertRegionName(StrEnum):
     The names of all expert peaks.
     """
 
-    NORTHERN_GREAT_BULWARK  = "Great Bulwark"
-    NORTHERN_SOLEMN_TEMPEST = "Solemn Tempest"
+    GREAT_BULWARK  = "Great Bulwark"
+    SOLEMN_TEMPEST = "Solemn Tempest"
 
 
 class EssentialsRegionName(StrEnum):
