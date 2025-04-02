@@ -266,6 +266,10 @@ class Items:
         self.__create_data(BaseItemName.MEDAL_INTERMEDIATE,        ItemClassification.filler)
         self.__create_data(BaseItemName.MEDAL_ADVANCED,            ItemClassification.filler)
 
+        self.__create_all(BaseItemName.TIME_ATTACK_FUNDAMENTALS,   ItemClassification.progression)
+        self.__create_all(BaseItemName.TIME_ATTACK_INTERMEDIATE,   ItemClassification.progression)
+        self.__create_all(BaseItemName.TIME_ATTACK_ADVANCED,       ItemClassification.progression)
+
         ## Alps DLC
         # Flowers
         self.__create_data(DlcItemName.GENTIANA,                  ItemClassification.progression)
