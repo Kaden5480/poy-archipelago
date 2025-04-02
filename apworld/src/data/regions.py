@@ -1,5 +1,3 @@
-from enum import StrEnum
-
 from .id_handler import IDHandler
 
 from ..names.regions import RegionName, \

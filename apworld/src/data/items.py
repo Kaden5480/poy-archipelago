@@ -1,5 +1,3 @@
-from enum import StrEnum
-
 from BaseClasses import ItemClassification
 
 from .id_handler import IDHandler
