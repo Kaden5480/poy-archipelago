@@ -193,6 +193,15 @@ class PeaksWorld(World):
             region.poy_create_connections(self)
             region.poy_create_locations(self)
 
+    @override
+    def create_items(self) -> None:
+        """
+        Creates items, adding them to the item pool.
+        """
+
+        local_pool = []
+        self.multiworld.itempool += self.local_pool
+
     def add_cabin_rule(
         self,
         cabin: PoYRegionName,
