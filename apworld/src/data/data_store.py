@@ -22,6 +22,10 @@ class DataStore:
 
         self.__items = Items(handler)
         self.__locations = Locations(handler)
+
+        # Number of defined items and locations must match
+        assert self.__items.count == self.__locations.count
+
         self.__regions = Regions(handler)
 
     @property
