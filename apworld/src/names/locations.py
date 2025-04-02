@@ -1,7 +1,8 @@
 from enum import StrEnum
 
 from .items import BaseItemName, \
-                   DlcItemName
+                   DlcItemName, \
+                   ItemSuffix
 
 class BaseLocationName(StrEnum):
     """
@@ -146,8 +147,8 @@ class LocationSuffix(StrEnum):
     upon suffixes instead.
     """
 
-    STAMP           = "Stamp"
-    STAMP_FREE_SOLO = "Stamp (Free Solo)"
+    STAMP           = ItemSuffix.STAMP
+    STAMP_FREE_SOLO = ItemSuffix.STAMP_FREE_SOLO
 
 
 # Location names excluding suffixes
