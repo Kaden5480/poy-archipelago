@@ -2,7 +2,14 @@ from enum import StrEnum
 
 from .id_handler import IDHandler
 from .items import PoYItemName
-from .regions import PoYRegionName
+from .regions import PoYRegionName, \
+                     gales_fundamentals, \
+                     gales_intermediate, \
+                     gales_advanced, \
+                     northern_expert, \
+                     alps_essentials, \
+                     alps_greats, \
+                     alps_arctic
 
 class PoYLocationName(StrEnum):
     ## Base game
@@ -118,6 +125,17 @@ class PoYLocationName(StrEnum):
     IDOL_OF_SUNDOWN_2                 = "Idol of Sundown #2 (Dunderhorn)"
     IDOL_OF_SEEDS_1                   = "Idol of Seeds #1 (Treppenwald)"
     IDOL_OF_SEEDS_2                   = "Idol of Seeds #2 (Eldris Wall)"
+
+    ## Extra items which can be randomised
+    TICKET_NORTHERN_RANGE     = PoYItemName.TICKET_NORTHERN_RANGE
+
+    BOOK_GALES_FUNDAMENTALS   = PoYItemName.BOOK_GALES_FUNDAMENTALS
+    BOOK_GALES_INTERMEDIATE   = PoYItemName.BOOK_GALES_INTERMEDIATE
+    BOOK_GALES_ADVANCED       = PoYItemName.BOOK_GALES_ADVANCED
+    BOOK_NORTHERN_EXPERT      = PoYItemName.BOOK_NORTHERN_EXPERT
+    BOOK_ALPS_ESSENTIALS      = PoYItemName.BOOK_ALPS_ESSENTIALS
+    BOOK_ALPS_GREATS          = PoYItemName.BOOK_ALPS_GREATS
+    BOOK_ALPS_ARCTIC          = PoYItemName.BOOK_ALPS_ARCTIC
 
 
 base_locations = [
@@ -243,7 +261,7 @@ class PoYLocationData:
 class PoYLocations:
     handler: IDHandler
 
-    locations: dict[PoYRegionName, PoYLocationData]
+    locations: dict[PoYRegionName, list[PoYLocationData]]
 
     def __init__(self, handler: IDHandler) -> None:
         """
@@ -726,6 +744,59 @@ class PoYLocations:
             PoYItemName.IDOL_OF_SEEDS_2
         )
 
+        # Tickets
+        self.create_location(
+            PoYLocationData.TICKET_NORTHERN_RANGE,
+            PoYRegionName.GALES_CABIN,
+            PoYItemName.TICKET_NORTHERN_RANGE
+        )
+
+        # Books
+        self.create_location(
+            PoYLocationName.BOOK_GALES_FUNDAMENTALS,
+            PoYRegionName.GALES_CABIN,
+            PoYItemName.BOOK_GALES_FUNDAMENTALS
+        )
+        self.create_location(
+            PoYLocationName.BOOK_GALES_INTERMEDIATE,
+            PoYRegionName.GALES_CABIN,
+            PoYItemName.BOOK_GALES_INTERMEDIATE
+        )
+        self.create_location(
+            PoYLocationName.BOOK_GALES_ADVANCED,
+            PoYRegionName.GALES_CABIN,
+            PoYItemName.BOOK_GALES_ADVANCED
+        )
+        self.create_location(
+            PoYLocationName.BOOK_NORTHERN_EXPERT,
+            PoYRegionName.GALES_CABIN,
+            PoYItemName.BOOK_NORTHERN_EXPERT
+        )
+        self.create_location(
+            PoYLocationName.BOOK_ALPS_ESSENTIALS,
+            PoYRegionName.ALPS_CABIN,
+            PoYItemName.BOOK_ALPS_ESSENTIALS
+        )
+        self.create_location(
+            PoYLocationName.BOOK_ALPS_GREATS,
+            PoYRegionName.ALPS_CABIN,
+            PoYItemName.BOOK_ALPS_GREATS
+        )
+        self.create_location(
+            PoYLocationName.BOOK_ALPS_ARCTIC,
+            PoYRegionName.ALPS_CABIN,
+            PoYItemName.BOOK_ALPS_ARCTIC
+        )
+
+        # Create stamp locations
+        self.create_stamps(gales_fundamentals, PoYItemName.STAMP_GALES_FUNDAMENTALS)
+        self.create_stamps(gales_intermediate, PoYItemName.STAMP_GALES_INTERMEDIATE)
+        self.create_stamps(gales_advanced,     PoYItemName.STAMP_GALES_ADVANCED)
+        self.create_stamps(northern_expert,    PoYItemName.STAMP_NORTHERN_EXPERT)
+        self.create_stamps(alps_essentials,    PoYItemName.STAMP_ALPS_ESSENTIALS)
+        self.create_stamps(alps_greats,        PoYItemName.STAMP_ALPS_GREATS)
+        self.create_stamps(alps_arctic,        PoYItemName.STAMP_ALPS_ARCTIC)
+
     def create_location(
         self,
         name: PoYLocationName,
@@ -746,6 +817,25 @@ class PoYLocations:
         self.locations[region_name].append(PoYLocationData(
             name, item_name
         ))
+
+    def create_stamps(
+        self,
+        category: list[PoYRegionName],
+        stamp: PoYItemName
+    ) -> None:
+        """
+        Creates the stamp locations for all
+        peaks in a given category.
+
+        :param category: The peaks in the category
+        :param stamp: The type of stamp for this category
+        """
+
+        for peak in gales_fundamentals:
+            self.create_location(
+                f"{peak.value} Stamp",
+                peak, stamp
+            )
 
 
 class PeaksLocation(Location):
