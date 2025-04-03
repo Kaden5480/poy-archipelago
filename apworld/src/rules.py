@@ -94,6 +94,12 @@ class Rules:
         :returns: The rule for checking this
         """
 
+        try:
+            item.value
+
+        except:
+            print(f"{item} has no .value")
+
         return lambda state: state.has(item.value, self.player, count)
 
     def has_item_suffix(
@@ -138,24 +144,33 @@ class Rules:
         self
     ) -> Callable[[CollectionState], bool]:
         """
-        Checks whether crampons are currently unlocked.
+        Checks whether the player has crampons.
 
         :returns: The rule for checking this
         """
 
-        return lambda state: self.has_item(state, BaseItemName.TOOL_CRAMPONS_6) \
-                or self.has_item(state, BaseItemName.TOOL_CRAMPONS_10)
+        return lambda state: self.has_item(BaseItemName.TOOL_CRAMPONS_6)(state) \
+                or self.has_item(BaseItemName.TOOL_CRAMPONS_10)(state)
 
     def has_ice_axes(
         self
     ) -> Callable[[CollectionState], bool]:
         """
-        Checks whether ice axes are currently unlocked.
+        Checks whether the player has ice axes.
 
         :returns: The rule for checking this
         """
 
-        return lambda state: self.has_item(state, BaseItemName.TOOL_ICE_AXES)
+        return self.has_item(BaseItemName.TOOL_ICE_AXES)
+
+    def has_pocketwatch(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the player has the pocketwatch.
+        """
+
+        return self.has_item(BaseItemName.TOOL_POCKETWATCH)
 
     # Event checks
     def has_all_photograph(
@@ -334,7 +349,9 @@ class Rules:
         :returns: The rule to check this
         """
 
-        return lambda state: True
+        return self.has_time_attacks(
+            BaseItemName.TIME_ATTACK_INTERMEDIATE, 10
+        )
 
     def unlocked_pocketwatch(
         self
@@ -423,6 +440,22 @@ class Rules:
             state.has(data.name, self.player)
             for data in stamps
         ].count(True) >= count
+
+    # Time attack checks
+    def has_time_attacks(
+        self,
+        time_attack: ItemName,
+        count: int
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the player has achieved
+        at least `count` time attacks in a given category.
+
+        :param time_attack: The time attack category to check
+        :param count: The number of time attacks to check for
+        """
+
+        return self.has_item(time_attack, count)
 
     # Category unlock checks
     def unlocked_intermediate(
@@ -535,3 +568,55 @@ class Rules:
                 and self.all_intermediate()(state) \
                 and self.all_advanced()(state) \
                 and self.all_expert()(state)
+
+    # All peaks time attacks
+    def all_fundamentals_time_attack(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether all time attacks have been
+        unlocked in the fundamentals.
+        """
+
+        return self.has_time_attacks(
+            BaseItemName.TIME_ATTACK_FUNDAMENTALS,
+            20
+        )
+
+    def all_intermediate_time_attack(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether all time attacks have been
+        unlocked in the intermediate category.
+        """
+
+        return self.has_time_attacks(
+            BaseItemName.TIME_ATTACK_INTERMEDIATE,
+            10
+        )
+
+    def all_advanced_time_attack(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether all time attacks have been
+        unlocked in the advanced category.
+        """
+
+        return self.has_time_attacks(
+            BaseItemName.TIME_ATTACK_ADVANCED,
+            5
+        )
+
+    def all_base_time_attacks(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether all time attacks in the base game
+        have been beaten
+        """
+
+        return lambda state: self.all_fundamentals_time_attack()(state) \
+                and self.all_intermediate_time_attack()(state) \
+                and self.all_advanced_time_attack()(state)

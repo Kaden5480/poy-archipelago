@@ -187,6 +187,9 @@ class Locations:
         time_attacks = []
 
         for peak in category:
+            if peak.name == "CATEGORY":
+                continue
+
             if (time_attack := self.get_data_time_attack(peak)) is not None:
                 time_attacks.append(time_attack)
 

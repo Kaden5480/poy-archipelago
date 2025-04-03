@@ -671,6 +671,21 @@ class PeaksWorld(World):
                 location, rule
             )
 
+        # Time attacks require access to the pocketwatch
+        for category in (
+            FundamentalsRegionName,
+            IntermediateRegionName,
+            AdvancedRegionName,
+        ):
+            for peak in category:
+                if peak.name == "CATEGORY":
+                    continue
+
+                location = self.poy_get_location_suffix(
+                    peak, LocationSuffix.TIME_ATTACK
+                )
+                location.poy_add_rule(self.poy_rules.has_pocketwatch())
+
         # Require items for going from cabins to their
         # associated ice peak categories
         for cabin, category in (
@@ -690,7 +705,7 @@ class PeaksWorld(World):
 
         # Set the victory condition
         self.multiworld.completion_condition[self.player] \
-                = self.poy_rules.has_item(BaseItemName.SHOE)
+                = self.poy_rules.has_stamps_base(37)
 
     def connect_entrances(self) -> None:
         """
