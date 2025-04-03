@@ -64,6 +64,7 @@ class Locations:
     __handler: IDHandler
     __region_to_locations: dict[str, list[LocationData]]
     __locations: dict[str, LocationData]
+    __item_counts: dict[str, int]
 
     def __init__(self, handler: IDHandler) -> None:
         """
@@ -75,6 +76,7 @@ class Locations:
         self.__handler = handler
         self.__region_to_locations = {}
         self.__locations = {}
+        self.__item_counts = {}
 
         self.__create_all()
 
@@ -223,6 +225,17 @@ class Locations:
 
         return stamps
 
+    def get_max_item_count(self, item_name: str) -> int:
+        """
+        Gets the maximum number of times this item
+        can appear in the game.
+
+        :param item_name: The name of the item
+        :returns: The maximum number of times this item can appear
+        """
+
+        return self.__item_counts[item_name]
+
     def __create_data_str(
         self,
         name: str,
@@ -258,6 +271,12 @@ class Locations:
         # Store the location data
         self.__region_to_locations[region].append(data)
         self.__locations[name] = data
+
+        # Also store the count of items
+        if item_name not in self.__item_counts:
+            self.__item_counts[item_name] = 0
+
+        self.__item_counts[item_name] += 1
 
     def __create_data(
         self,
