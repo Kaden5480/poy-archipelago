@@ -106,6 +106,17 @@ class StartingHandsOption(Choice):
     default = 0
 
 
+class ProgressiveCramponsOption(Toggle):
+    """
+    TODO: Implement this, combine 6 and 10 points as one item
+          Check for counts of this item to know the level of crampons
+
+    Whether 6 points must be unlocked before 10 points.
+    """
+
+    display_name = "Progressive Crampons"
+
+
 ## Regions ##
 
 class RequireCramponsOption(Toggle):
@@ -178,6 +189,7 @@ class PeaksOptions(PerGameCommonOptions):
     # Items
     starting_barometer: StartingBarometerOption
     starting_hands: StartingHandsOption
+    progressive_crampons: ProgressiveCramponsOption
 
     # Regions
     require_crampons: RequireCramponsOption
