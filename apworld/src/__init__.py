@@ -381,6 +381,8 @@ class PeaksWorld(World):
         Creates all items, adding them to the world's item pool.
         """
 
+        local_pool: list[PeaksItem] = []
+
         # Iterate over all locations creating
         # their default items, unless they already
         # have been pushed to the multiworld
