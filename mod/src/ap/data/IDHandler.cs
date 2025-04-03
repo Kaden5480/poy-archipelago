@@ -1,4 +1,4 @@
-namespace PoYArchipelago.Data {
+namespace PoYArchipelago.AP.Data {
     public class IDHandler {
         // The default ID
         private long id = 1;

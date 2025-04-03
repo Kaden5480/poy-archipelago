@@ -1,6 +1,6 @@
-using PoYArchipelago.Data;
+using PoYArchipelago.AP.Data;
 
-namespace PoYArchipelago {
+namespace PoYArchipelago.AP {
     public class DataStore {
         // Data for all items
         public Items items { get; }

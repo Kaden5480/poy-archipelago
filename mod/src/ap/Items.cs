@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-using PoYArchipelago.Data;
+using PoYArchipelago.AP.Data;
 
-namespace PoYArchipelago {
+namespace PoYArchipelago.AP {
     public class Items {
         private IDHandler handler { get; }
         private Dictionary<long, ItemData> items { get; } = new Dictionary<long, ItemData>();

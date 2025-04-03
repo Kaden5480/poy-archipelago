@@ -1,4 +1,4 @@
-namespace PoYArchipelago.Names {
+namespace PoYArchipelago.AP.Names {
     public static class RegionName {
         // Fundamentals
         const string GREENHORNS_TOP          = "Greenhorn's Top";

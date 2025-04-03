@@ -1,4 +1,4 @@
-namespace PoYArchipelago.Names {
+namespace PoYArchipelago.AP.Names {
     public static class LocationSuffix {
         public const string STAMP       = "Stamp";
         public const string TIME_ATTACK = "Time Attack";

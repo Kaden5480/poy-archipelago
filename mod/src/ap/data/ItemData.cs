@@ -1,6 +1,6 @@
 using System;
 
-namespace PoYArchipelago.Data {
+namespace PoYArchipelago.AP.Data {
     /**
      * <summary>
      * Data for an item.
