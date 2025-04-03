@@ -359,6 +359,10 @@ class PeaksWorld(World):
         ]) is False:
             raise Exception("At least one category of peaks must be enabled")
 
+        # TODO: Decide the starting cabin early
+        # TODO: Give access to a book for whichever categories
+        # are enabled
+
         # Access to the fundamentals and essentials book is a given
         self.multiworld.push_precollected(
             self.poy_create_item(BaseItemName.BOOK_GALES_FUNDAMENTALS.value)
