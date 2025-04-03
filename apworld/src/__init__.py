@@ -264,20 +264,20 @@ class PeaksWorld(World):
         if cabin_gales is not None:
             cabin_gales.poy_connect(
                 self.poy_get_region(FundamentalsRegionName.CATEGORY),
-                lambda state: self.poy_rules.has_item(
-                    state, BaseItemName.BOOK_GALES_FUNDAMENTALS
+                self.poy_rules.has_item(
+                    BaseItemName.BOOK_GALES_FUNDAMENTALS
                 )
             )
             cabin_gales.poy_connect(
                 self.poy_get_region(IntermediateRegionName.CATEGORY),
-                lambda state: self.poy_rules.has_item(
-                    state, BaseItemName.BOOK_GALES_INTERMEDIATE
+                self.poy_rules.has_item(
+                    BaseItemName.BOOK_GALES_INTERMEDIATE
                 )
             )
             cabin_gales.poy_connect(
                 self.poy_get_region(AdvancedRegionName.CATEGORY),
-                lambda state: self.poy_rules.has_item(
-                    state, BaseItemName.BOOK_GALES_ADVANCED
+                self.poy_rules.has_item(
+                    BaseItemName.BOOK_GALES_ADVANCED
                 )
             )
 
@@ -289,8 +289,8 @@ class PeaksWorld(World):
         if cabin_northern is not None:
             cabin_northern.poy_connect(
                 self.poy_get_region(ExpertRegionName.CATEGORY),
-                lambda state: self.poy_rules.has_item(
-                    state, BaseItemName.BOOK_NORTHERN_EXPERT
+                self.poy_rules.has_item(
+                    BaseItemName.BOOK_NORTHERN_EXPERT
                 )
             )
 
@@ -298,20 +298,20 @@ class PeaksWorld(World):
         if cabin_alps is not None:
             cabin_alps.poy_connect(
                 self.poy_get_region(EssentialsRegionName.CATEGORY),
-                lambda state: self.poy_rules.has_item(
-                    state, DlcItemName.BOOK_ALPS_ESSENTIALS
+                self.poy_rules.has_item(
+                    DlcItemName.BOOK_ALPS_ESSENTIALS
                 )
             )
             cabin_alps.poy_connect(
                 self.poy_get_region(GreatsRegionName.CATEGORY),
-                lambda state: self.poy_rules.has_item(
-                    state, DlcItemName.BOOK_ALPS_GREATS
+                self.poy_rules.has_item(
+                    DlcItemName.BOOK_ALPS_GREATS
                 )
             )
             cabin_alps.poy_connect(
                 self.poy_get_region(ArcticRegionName.CATEGORY),
-                lambda state: self.poy_rules.has_item(
-                    state, DlcItemName.BOOK_ALPS_ARCTIC
+                self.poy_rules.has_item(
+                    DlcItemName.BOOK_ALPS_ARCTIC
                 )
             )
 
@@ -323,8 +323,8 @@ class PeaksWorld(World):
         if cabin_gales is not None:
             cabin_gales.poy_connect(
                 cabin_northern,
-                lambda state: self.poy_rules.has_item(
-                    state, BaseItemName.TICKET_NORTHERN_RANGE
+                self.poy_rules.has_item(
+                    BaseItemName.TICKET_NORTHERN_RANGE
                 )
             )
             cabin_gales.poy_connect(cabin_alps)
@@ -522,12 +522,8 @@ class PeaksWorld(World):
         and items to try to mitigate soft locks.
         """
 
-        def condition(state: CollectionState) -> bool:
-            return self.poy_rules.has_item(
-                state, BaseItemName.SHOE
-            )
-
-        self.multiworld.completion_condition[self.player] = condition
+        self.multiworld.completion_condition[self.player] \
+                = self.poy_rules.has_item(BaseItemName.SHOE)
 
     def connect_entrances(self) -> None:
         """
