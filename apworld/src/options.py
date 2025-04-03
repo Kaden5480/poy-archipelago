@@ -61,6 +61,21 @@ class EnableArcticOption(Toggle):
     display_name = "Enable Arduous and Arctic"
 
 
+## Goals ##
+
+class GoalOption(Choice):
+    """
+    What the goal for victory should be.
+    """
+
+    display_name         = "Goal"
+    option_oas_member    = 0
+    option_oas_president = 1
+    option_all_peaks     = 2
+    option_everything    = 3
+    default              = 0
+
+
 ## Items ##
 
 class StartingBarometerOption(Toggle):
@@ -99,12 +114,37 @@ class RequireCramponsOption(Toggle):
     display_name = "Require Crampons"
 
 
+## Randomisation ##
+
 class RandomiseLevelsOption(Toggle):
     """
     Whether the entrances and exits to levels should be randomised.
     """
 
     display_name = "Randomise Levels"
+
+
+class RandomiseItemsOption(Toggle):
+    """
+    Whether the items should be randomised.
+    """
+
+    display_name = "Randomise Items"
+
+
+class RandomiseStampsOption(Toggle):
+    """
+    Whether stamps should be randomised.
+    """
+
+    display_name = "Randomise Stamps"
+
+class NoLogicOption(Toggle):
+    """
+    Whether all randomisation rules should be thrown out the window.
+    """
+
+    display_name = "No Logic"
 
 
 @dataclass
@@ -115,9 +155,12 @@ class PeaksOptions(PerGameCommonOptions):
     enable_intermediate: EnableIntermediateOption
     enable_advanced: EnableAdvancedOption
     enable_expert: EnableExpertOption
-    enable_alp_essentials: EnableEssentialsOption
-    enable_alp_greats: EnableGreatsOption
-    enable_alp_arctic: EnableArcticOption
+    enable_essentials: EnableEssentialsOption
+    enable_greats: EnableGreatsOption
+    enable_arctic: EnableArcticOption
+
+    # Goal
+    goal: GoalOption
 
     # Items
     starting_barometer: StartingBarometerOption
@@ -125,4 +168,9 @@ class PeaksOptions(PerGameCommonOptions):
 
     # Regions
     require_crampons: RequireCramponsOption
+
+    # Randomisation
     randomise_levels: RandomiseLevelsOption
+    randomise_items: RandomiseItemsOption
+    randomise_stamps: RandomiseStampsOption
+    no_logic: NoLogicOption
