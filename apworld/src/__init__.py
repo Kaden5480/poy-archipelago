@@ -593,113 +593,83 @@ class PeaksWorld(World):
         and items to try to mitigate soft locks.
         """
 
-        # You can't access some locations without enough stamps
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.BOOK_GALES_INTERMEDIATE,
-            self.poy_rules.unlocked_intermediate()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.BOOK_GALES_ADVANCED,
-            self.poy_rules.unlocked_advanced()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TICKET_NORTHERN_RANGE,
-            self.poy_rules.unlocked_expert()
-        )
-        self.poy_rules.add_loc_rule(
-            DlcLocationName.BOOK_ALPS_GREATS,
-            self.poy_rules.unlocked_greats()
-        )
-        self.poy_rules.add_loc_rule(
-            DlcLocationName.BOOK_ALPS_ARCTIC,
-            self.poy_rules.unlocked_arctic()
-        )
+        basic_rules = {
+            # You can't access some locations without enough stamps
+            BaseLocationName.BOOK_GALES_INTERMEDIATE:
+            self.poy_rules.unlocked_intermediate(),
+            BaseLocationName.BOOK_GALES_ADVANCED:
+            self.poy_rules.unlocked_advanced(),
+            BaseLocationName.TICKET_NORTHERN_RANGE:
+            self.poy_rules.unlocked_expert(),
+            DlcLocationName.BOOK_ALPS_GREATS:
+            self.poy_rules.unlocked_greats(),
+            DlcLocationName.BOOK_ALPS_ARCTIC:
+            self.poy_rules.unlocked_arctic(),
 
-        # Lock locations for completing all peaks in categories
-        for location in (
-            BaseLocationName.ALL_FUNDAMENTALS_MEDAL,
-            BaseLocationName.ALL_FUNDAMENTALS_CHALK,
-            BaseLocationName.ALL_FUNDAMENTALS_COFFEE,
-            BaseLocationName.ALL_FUNDAMENTALS_ROPES,
-        ):
+            # All fundamentals peaks
+            BaseLocationName.ALL_FUNDAMENTALS_MEDAL:
+            self.poy_rules.all_fundamentals(),
+            BaseLocationName.ALL_FUNDAMENTALS_CHALK:
+            self.poy_rules.all_fundamentals(),
+            BaseLocationName.ALL_FUNDAMENTALS_COFFEE:
+            self.poy_rules.all_fundamentals(),
+            BaseLocationName.ALL_FUNDAMENTALS_ROPES:
+            self.poy_rules.all_fundamentals(),
+
+            # All intermediate peaks
+            BaseLocationName.ALL_INTERMEDIATE_MEDAL:
+            self.poy_rules.all_intermediate(),
+            BaseLocationName.ALL_INTERMEDIATE_CHALK:
+            self.poy_rules.all_intermediate(),
+            BaseLocationName.ALL_INTERMEDIATE_COFFEE:
+            self.poy_rules.all_intermediate(),
+            BaseLocationName.ALL_INTERMEDIATE_ROPES:
+            self.poy_rules.all_intermediate(),
+
+            # All advanced peaks
+            BaseLocationName.ALL_ADVANCED_MEDAL:
+            self.poy_rules.all_advanced(),
+            BaseLocationName.ALL_ADVANCED_CHALK:
+            self.poy_rules.all_advanced(),
+            BaseLocationName.ALL_ADVANCED_COFFEE:
+            self.poy_rules.all_advanced(),
+            BaseLocationName.ALL_ADVANCED_ROPES:
+            self.poy_rules.all_advanced(),
+
+            # Tools
+            BaseLocationName.TOOL_ARTEFACT_MAP:
+            self.poy_rules.unlocked_barometer(),
+            BaseLocationName.TOOL_BAROMETER:
+            self.poy_rules.unlocked_barometer(),
+            BaseLocationName.TOOL_CHALK_BAG:
+            self.poy_rules.unlocked_chalk(),
+            BaseLocationName.TOOL_COFFEE:
+            self.poy_rules.unlocked_coffee(),
+            BaseLocationName.TOOL_CRAMPONS_6:
+            self.poy_rules.unlocked_crampons_6(),
+            BaseLocationName.TOOL_CRAMPONS_10:
+            self.poy_rules.unlocked_crampons_10(),
+            BaseLocationName.TOOL_ICE_AXES:
+            self.poy_rules.unlocked_ice_axes(),
+            # Skip monocular, its only rule is on unlocking
+            # three brothers
+            BaseLocationName.TOOL_PHONOGRAPH:
+            self.poy_rules.unlocked_phonograph(),
+            BaseLocationName.TOOL_PIPE:
+            self.poy_rules.unlocked_pipe(),
+            BaseLocationName.TOOL_POCKETWATCH:
+            self.poy_rules.unlocked_pocketwatch(),
+            BaseLocationName.TOOL_ROPE:
+            self.poy_rules.unlocked_rope(),
+            BaseLocationName.ALL_PICTURES_ROPE_DOUBLE:
+            self.poy_rules.has_all_photograph(),
+        }
+
+        # Apply all basic rules
+        for location, rule in basic_rules.items():
             self.poy_rules.add_loc_rule(
-                location,
-                self.poy_rules.all_fundamentals()
+                location, rule
             )
-
-        for location in (
-            BaseLocationName.ALL_INTERMEDIATE_MEDAL,
-            BaseLocationName.ALL_INTERMEDIATE_CHALK,
-            BaseLocationName.ALL_INTERMEDIATE_COFFEE,
-            BaseLocationName.ALL_INTERMEDIATE_ROPES,
-        ):
-            self.poy_rules.add_loc_rule(
-                location,
-                self.poy_rules.all_intermediate()
-            )
-
-        for location in (
-            BaseLocationName.ALL_ADVANCED_MEDAL,
-            BaseLocationName.ALL_ADVANCED_CHALK,
-            BaseLocationName.ALL_ADVANCED_COFFEE,
-            BaseLocationName.ALL_ADVANCED_ROPES,
-        ):
-            self.poy_rules.add_loc_rule(
-                location,
-                self.poy_rules.all_advanced()
-            )
-
-        # Tools
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_ARTEFACT_MAP,
-            self.poy_rules.unlocked_barometer()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_BAROMETER,
-            self.poy_rules.unlocked_barometer()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_CHALK_BAG,
-            self.poy_rules.unlocked_chalk()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_COFFEE,
-            self.poy_rules.unlocked_coffee()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_CRAMPONS_6,
-            self.poy_rules.unlocked_crampons_6()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_CRAMPONS_10,
-            self.poy_rules.unlocked_crampons_10()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_ICE_AXES,
-            self.poy_rules.unlocked_ice_axes()
-        )
-        # Skip monocular, its only rule is on unlocking
-        # three brothers
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_PHONOGRAPH,
-            self.poy_rules.unlocked_phonograph()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_PIPE,
-            self.poy_rules.unlocked_pipe()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_POCKETWATCH,
-            self.poy_rules.unlocked_pocketwatch()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.TOOL_ROPE,
-            self.poy_rules.unlocked_rope()
-        )
-        self.poy_rules.add_loc_rule(
-            BaseLocationName.ALL_PICTURES_ROPE_DOUBLE,
-            self.poy_rules.has_all_photograph()
-        )
 
         # Require items for going from cabins to their
         # associated ice peak categories
