@@ -5,6 +5,7 @@ from worlds.AutoWorld import World
 from BaseClasses import CollectionState, \
                         Entrance, \
                         Item, \
+                        ItemClassification, \
                         Location, \
                         Region
 
@@ -13,8 +14,9 @@ from .data.items import ItemData
 from .data.locations import LocationData
 from .data.regions import RegionData
 
-from .names.regions import *
 from .names.items import *
+from .names.locations import *
+from .names.regions import *
 
 from .rules import Rules
 from .options import PeaksOptions
@@ -42,9 +44,12 @@ class PeaksRegion(Region):
         """
         Connects this region to another region.
 
-        :param region: The region to connect to
+        :param region: The region to connect to, if any
         :param rule: The access rule for this connection, if any
         """
+
+        if region is None:
+            return
 
         self.__poy_connections[region.name] = self.connect(
             region,
@@ -88,7 +93,7 @@ class PeaksWorld(World):
 
     poy_rules: Rules
 
-    poy_created_regions: dict[RegionName, PeaksRegion] = {}
+    poy_created_regions: dict[str, PeaksRegion] = {}
     poy_created_items: dict[str, list[ItemData]] = {}
 
     def __init__(self, *args, **kwargs) -> None:
@@ -97,6 +102,56 @@ class PeaksWorld(World):
         super().__init__(*args, **kwargs)
 
     # Extensions
+    def poy_ignore_region(
+        self,
+        name: RegionName
+    ) -> bool:
+        """
+        Whether this region should be ignored as
+        it's disabled by the user.
+
+        :param name: The name of the region
+        :returns: True if it should be ignored, False otherwise
+        """
+
+        # Check cabins
+        if name == CabinRegionName.GALES is True:
+            return not self.options.enable_fundamental \
+                    and not self.options.enable_intermediate \
+                    and not self.options.enable_advanced \
+
+        if name == CabinRegionName.NORTHERN:
+            return not self.options.enable_expert
+
+        if name == CabinRegionName.ALPS:
+            return not self.options.enable_essentials \
+                    and not self.options.enable_greats \
+                    and not self.options.enable_arctic
+
+        # Check peak categories
+        if type(name) == FundamentalsRegionName:
+            return not self.options.enable_fundamentals
+
+        if type(name) == IntermediateRegionName:
+            return not self.options.enable_intermediate
+
+        if type(name) == AdvancedRegionName:
+            return not self.options.enable_advanced
+
+        if type(name) == ExpertRegionName:
+            return not self.options.enable_expert
+
+        if type(name) == EssentialsRegionName:
+            return not self.options.enable_essentials
+
+        if type(name) == GreatsRegionName:
+            return not self.options.enable_greats
+
+        if type(name) == ArcticRegionName:
+            return not self.options.enable_arctic
+
+        return False
+
     def poy_create_region(self, name: RegionName) -> None:
         """
         Creates a region given its name.
@@ -105,26 +160,20 @@ class PeaksWorld(World):
         :param name: The name of the region to create
         """
 
-        locations: list[LocationData] = self.poy_data.locations.get_data_for_region(name)
-        data: RegionData = self.poy_data.regions.get_data(name)
+        # If this region is ignored, don't create it
+        if self.poy_ignore_region(name) is True:
+            return
 
+        data: RegionData = self.poy_data.regions.get_data(name)
         region: PeaksRegion = PeaksRegion(
             data.name, self.player,
             self.multiworld
         )
 
-        for data in locations:
-            location = PeaksLocation(
-                self.player,
-                data.name,
-                data.id,
-                region
-            )
+        print(f"Created region: {name}")
 
-            location.place_locked_item(self.create_item(data.item_name))
-            region.locations.append(location)
-
-        self.poy_created_regions[name] = region
+        self.poy_created_regions[name.value] = region
+        self.multiworld.regions.append(region)
 
     def poy_create_regions(
         self,
@@ -139,10 +188,10 @@ class PeaksWorld(World):
         for region in category:
             self.poy_create_region(region)
 
-    def poy_get_region(
+    def poy_get_region_str(
         self,
-        name: RegionName
-    ) -> PeaksRegion:
+        name: str
+    ) -> PeaksRegion | None:
         """
         Gets a created region by its name.
 
@@ -151,6 +200,19 @@ class PeaksWorld(World):
         """
 
         return self.poy_created_regions.get(name, None)
+
+    def poy_get_region(
+        self,
+        name: RegionName
+    ) -> PeaksRegion | None:
+        """
+        Gets a created region by its name.
+
+        :param name: The name of the region to find
+        :returns: The region if found, None otherwise
+        """
+
+        return self.poy_get_region_str(name.value)
 
     def poy_connect_category(
         self,
@@ -168,6 +230,9 @@ class PeaksWorld(World):
 
         # Get the category region itself
         category_region = self.poy_get_region(category_name)
+
+        if category_region is None:
+            return
 
         for peak in category:
             # Don't link the category to itself
@@ -196,91 +261,82 @@ class PeaksWorld(World):
         ### Connections from cabins to their categories
 
         # Great Gales categories
-        cabin_gales.poy_connect(
-            self.poy_get_region(FundamentalsRegionName.CATEGORY),
-            lambda state: self.poy_rules.has_item(
-                state, BaseItemName.BOOK_GALES_FUNDAMENTALS
+        if cabin_gales is not None:
+            cabin_gales.poy_connect(
+                self.poy_get_region(FundamentalsRegionName.CATEGORY),
+                lambda state: self.poy_rules.has_item(
+                    state, BaseItemName.BOOK_GALES_FUNDAMENTALS
+                )
             )
-        )
-        cabin_gales.poy_connect(
-            self.poy_get_region(IntermediateRegionName.CATEGORY),
-            lambda state: self.poy_rules.has_item(
-                state, BaseItemName.BOOK_GALES_INTERMEDIATE
+            cabin_gales.poy_connect(
+                self.poy_get_region(IntermediateRegionName.CATEGORY),
+                lambda state: self.poy_rules.has_item(
+                    state, BaseItemName.BOOK_GALES_INTERMEDIATE
+                )
             )
-        )
-        cabin_gales.poy_connect(
-            self.poy_get_region(AdvancedRegionName.CATEGORY),
-            lambda state: self.poy_rules.has_item(
-                state, BaseItemName.BOOK_GALES_ADVANCED
+            cabin_gales.poy_connect(
+                self.poy_get_region(AdvancedRegionName.CATEGORY),
+                lambda state: self.poy_rules.has_item(
+                    state, BaseItemName.BOOK_GALES_ADVANCED
+                )
             )
-        )
 
         # Northern range categories
 
         # Due to an access rule set below with the northern
         # range ticket, this implicitly requires access to
         # the northern cabin before being reachable
-        cabin_northern.poy_connect(
-            self.poy_get_region(ExpertRegionName.CATEGORY),
-            lambda state: self.poy_rules.has_item(
-                state, BaseItemName.BOOK_NORTHERN_EXPERT
+        if cabin_northern is not None:
+            cabin_northern.poy_connect(
+                self.poy_get_region(ExpertRegionName.CATEGORY),
+                lambda state: self.poy_rules.has_item(
+                    state, BaseItemName.BOOK_NORTHERN_EXPERT
+                )
             )
-        )
 
         # Alps DLC categories
-        cabin_alps.poy_connect(
-            self.poy_get_region(EssentialsRegionName.CATEGORY),
-            lambda state: state.poy_rules.has_item(
-                state, DlcItemName.BOOK_ALPS_ESSENTIALS
+        if cabin_alps is not None:
+            cabin_alps.poy_connect(
+                self.poy_get_region(EssentialsRegionName.CATEGORY),
+                lambda state: self.poy_rules.has_item(
+                    state, DlcItemName.BOOK_ALPS_ESSENTIALS
+                )
             )
-        )
-        cabin_alps.poy_connect(
-            self.poy_get_region(GreatsRegionName.CATEGORY),
-            lambda state: state.poy_rules.has_item(
-                state, DlcItemName.BOOK_ALPS_GREATS
+            cabin_alps.poy_connect(
+                self.poy_get_region(GreatsRegionName.CATEGORY),
+                lambda state: self.poy_rules.has_item(
+                    state, DlcItemName.BOOK_ALPS_GREATS
+                )
             )
-        )
-        cabin_alps.poy_connect(
-            self.poy_get_region(ArcticRegionName.CATEGORY),
-            lambda state: state.poy_rules.has_item(
-                state, DlcItemName.BOOK_ALPS_ARCTIC
+            cabin_alps.poy_connect(
+                self.poy_get_region(ArcticRegionName.CATEGORY),
+                lambda state: self.poy_rules.has_item(
+                    state, DlcItemName.BOOK_ALPS_ARCTIC
+                )
             )
-        )
 
         ### Connections between cabins
 
         # The gales cabin connects to the northern one
         # through the ticket
-        cabin_gales.poy_connect(
-            cabin_northern,
-            lambda state: self.poy_rules.has_item(
-                state, BaseItemName.TICKET_NORTHERN_RANGE
+        # Also always has access to the DLC
+        if cabin_gales is not None:
+            cabin_gales.poy_connect(
+                cabin_northern,
+                lambda state: self.poy_rules.has_item(
+                    state, BaseItemName.TICKET_NORTHERN_RANGE
+                )
             )
-        )
-        # And the northern one can connect back always
-        cabin_northern.poy_connect(cabin_gales)
+            cabin_gales.poy_connect(cabin_alps)
 
-        # The northern cabin has one-way access to the alps
-        cabin_northern.poy_connect(cabin_alps)
+        # Northern cabin has access to Gales and DLC
+        if cabin_northern is not None:
+            cabin_northern.poy_connect(cabin_gales)
+            cabin_northern.poy_connect(cabin_alps)
 
-        # The gales cabin always has access to the DLC
-        # and vice versa
-        cabin_gales.poy_connect(cabin_alps)
-        cabin_alps.poy_connect(cabin_gales)
-
-    def poy_create_location(self, name: str) -> None:
-        """
-        Creates a location given its name.
-
-        :param name: The name of the location to create
-        :returns: The created location
-        """
-
-        location: LocationData = self.poy_data.locations.get_data_str(name)
-        return PeaksLocation(
-            self.player, location.name,
-            location.id, location.region
-        )
+        # Alps cabin can always access Gales cabin
+        if cabin_alps is not None:
+            cabin_alps.poy_connect(cabin_gales)
 
     # Overrides
     def generate_early(self) -> None:
@@ -291,17 +347,38 @@ class PeaksWorld(World):
         precollected items where necessary
         """
 
-        # Access to the fundamentals and essentials book is a given
-        book_0 = self.poy_create_item(BaseItemName.BOOK_GALES_FUNDAMENTALS.value)
-        book_1 = self.poy_create_item(DlcItemName.BOOK_ALPS_ESSENTIALS.value)
+        # Check at least one category is enabled
+        if any([
+            self.options.enable_fundamentals,
+            self.options.enable_intermediate,
+            self.options.enable_advanced,
+            self.options.enable_expert,
+            self.options.enable_essentials,
+            self.options.enable_greats,
+            self.options.enable_arctic
+        ]) is False:
+            raise Exception("At least one category of peaks must be enabled")
 
-        self.multiworld.push_precollected(book_0)
-        self.multiworld.push_precollected(book_1)
+        # Access to the fundamentals and essentials book is a given
+        self.multiworld.push_precollected(
+            self.poy_create_item(BaseItemName.BOOK_GALES_FUNDAMENTALS.value)
+        )
+        self.multiworld.push_precollected(
+            self.poy_create_item(DlcItemName.BOOK_ALPS_ESSENTIALS.value)
+        )
 
     def create_regions(self) -> None:
         """
         Creates all regions and the connections between them.
         """
+
+        # Create the menu region
+        menu_region = PeaksRegion(
+            "Menu", self.player,
+            self.multiworld
+        )
+        self.poy_created_regions["Menu"] = menu_region
+        self.multiworld.regions.append(menu_region)
 
         peak_categories = (
             FundamentalsRegionName, IntermediateRegionName,
@@ -334,15 +411,21 @@ class PeaksWorld(World):
         # categories/cabins
         self.poy_connect_cabins()
 
-        # Create the menu region
-        menu_region = PeaksRegion(
-            "Menu", self.player,
-            self.multiworld
-        )
-        self.poy_created_regions["Menu"] = menu_region
+        # Connect the menu to any accessible cabin
+        connected = False
+        for cabin in CabinRegionName:
+            if self.poy_ignore_region(cabin) is True:
+                break
 
-        # Connect the menu to the Gales Cabin
-        menu_region.poy_connect(self.poy_get_region(CabinRegionName.GALES))
+            menu_region.poy_connect(
+                self.poy_get_region(cabin)
+            )
+            connected = True
+
+        # If the generation made it this far,
+        # one of the categories must be enabled
+        # so a cabin should be reachable
+        assert connected is True
 
     def create_item(self, name: str) -> PeaksItem:
         """
@@ -386,22 +469,45 @@ class PeaksWorld(World):
         # Iterate over all locations creating
         # their default items, unless they already
         # have been pushed to the multiworld
-        location: LocationData
-        for location in self.poy_data.locations:
-            item_name = location.item_name
-            item_count = len(self.poy_created_items[item_name])
-
-            # Check whether enough of this item has
-            # already been made
-            max_item_count = self.poy_data.locations \
-                    .get_max_item_count(item_name)
-
-            if item_count >= max_item_count:
+        data: LocationData
+        for data in self.poy_data.locations:
+            # Check this region is enabled
+            region = self.poy_get_region_str(data.region)
+            if region is None:
                 continue
 
-            # Otherwise, add the item
-            item = self.poy_create_item(item_name)
-            local_pool.append(item)
+            item_name: str = data.item_name
+
+            item_count: int = len(self.poy_created_items.get(item_name, []))
+            max_item_count: int = self.poy_data.locations \
+                    .get_max_item_count(item_name)
+
+            location: PeaksLocation = PeaksLocation(
+                self.player,
+                data.name,
+                data.id,
+                region
+            )
+            location.progress_type = data.progress_type
+
+            item: PeaksItem = self.create_item(item_name)
+
+            # Lock stamps and time attack
+            if not self.options.randomise_stamps \
+                    and data.name.endswith(LocationSuffix.STAMP) is True:
+                location.place_locked_item(item)
+
+            elif data.name.endswith(LocationSuffix.TIME_ATTACK) is True:
+                location.place_locked_item(item)
+
+            # Or just add it to the pool if randomised
+            elif item_count < max_item_count:
+                if self.options.randomise_items:
+                    local_pool.append(item)
+                else:
+                    location.place_locked_item(item)
+
+            region.locations.append(location)
 
         # Add all items to the item pool
         self.multiworld.itempool += local_pool
@@ -412,7 +518,17 @@ class PeaksWorld(World):
         and items to try to mitigate soft locks.
         """
 
+        def condition(state: CollectionState) -> bool:
+            return self.poy_rules.has_item(
+                state, BaseItemName.SHOE
+            )
+
+        self.multiworld.completion_condition[self.player] = condition
+
     def connect_entrances(self) -> None:
         """
         Performs entrance randomisation.
         """
+
+        if not self.options.randomise_levels:
+            return
