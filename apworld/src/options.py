@@ -135,6 +135,15 @@ class RandomiseItemsOption(Toggle):
     display_name = "Randomise Items"
 
 
+class RandomiseItemsWeightedOption(Toggle):
+    """
+    Whether items significant to progression should
+    be more likely to end up where other progression items would be.
+    """
+
+    display_name = "Weighted Item Randomisation"
+
+
 class RandomiseStampsOption(Toggle):
     """
     Whether stamps should be randomised.
@@ -176,5 +185,6 @@ class PeaksOptions(PerGameCommonOptions):
     # Randomisation
     randomise_levels: RandomiseLevelsOption
     randomise_items: RandomiseItemsOption
+    randomise_items_weighted: RandomiseItemsWeightedOption
     randomise_stamps: RandomiseStampsOption
     no_logic: NoLogicOption

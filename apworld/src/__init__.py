@@ -508,6 +508,7 @@ class PeaksWorld(World):
         """
 
         item: ItemData = self.poy_data.items.get_data_str(name)
+
         return PeaksItem(
             item.name, item.classification,
             item.id, self.player
@@ -580,7 +581,10 @@ class PeaksWorld(World):
                 self.player, data.name,
                 data.id, region
             )
-            location.progress_type = data.progress_type
+
+            if self.options.randomise_items_weighted:
+                location.progress_type = data.progress_type
+
             item: PeaksItem = self.create_item(data.item_name)
 
             # Check if this location should lock an item
