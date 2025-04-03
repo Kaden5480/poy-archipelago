@@ -344,8 +344,6 @@ class Rules:
         """
         Checks whether the pipe can be unlocked.
 
-        TODO: implement this and time attack stuff
-
         :returns: The rule to check this
         """
 

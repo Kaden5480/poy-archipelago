@@ -65,6 +65,7 @@ class EnableArcticOption(Toggle):
 
 class GoalOption(Choice):
     """
+    TODO: Implement this
     What the goal for victory should be.
     """
 
@@ -88,6 +89,7 @@ class StartingBarometerOption(Toggle):
 
 class StartingHandsOption(Choice):
     """
+    TODO: Implement this
     Which hand(s) to start with.
 
     - **Both Hands:** Start with both hands.
@@ -118,6 +120,7 @@ class RequireCramponsOption(Toggle):
 
 class RandomiseLevelsOption(Toggle):
     """
+    TODO: Implement this
     Whether the entrances and exits to levels should be randomised.
     """
 
@@ -141,6 +144,7 @@ class RandomiseStampsOption(Toggle):
 
 class NoLogicOption(Toggle):
     """
+    [Low] TODO: Implement this
     Whether all randomisation rules should be thrown out the window.
     """
 
