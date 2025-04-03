@@ -431,6 +431,14 @@ class PeaksWorld(World):
             self.poy_create_item(DlcItemName.BOOK_ALPS_ESSENTIALS.value)
         )
 
+        # If starting with barometer and map, push it
+        if self.options.starting_barometer:
+            barometer = self.poy_create_item(BaseItemName.TOOL_BAROMETER.value)
+            map = self.poy_create_item(BaseItemName.TOOL_ARTEFACT_MAP.value)
+
+            self.multiworld.push_precollected(barometer)
+            self.multiworld.push_precollected(map)
+
     def create_regions(self) -> None:
         """
         Creates all regions and the connections between them.
