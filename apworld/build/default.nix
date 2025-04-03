@@ -9,5 +9,6 @@ in
 
         shellHook = ''
         ./build.sh
+        exit
         '';
     }
