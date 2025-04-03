@@ -120,10 +120,7 @@ class Items:
         :returns: The item data if found, None otherwise
         """
 
-        return self.__items.get(
-            f"{region.value} {suffix.value}",
-            None
-        )
+        return self.get_data_str(f"{region.value} {suffix.value}")
 
     def get_data_stamp(
         self,
@@ -136,7 +133,7 @@ class Items:
         :returns: The stamp if found, None otherwise
         """
 
-        self.get_data_suffix(ItemSuffix.STAMP, peak)
+        return self.get_data_suffix(ItemSuffix.STAMP, peak)
 
     def get_data_stamps(
         self,
