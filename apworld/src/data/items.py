@@ -154,6 +154,33 @@ class Items:
 
         return stamps
 
+    def get_data_stamps_base(
+        self
+    ) -> list[ItemData]:
+        """
+        Gets all stamps for the base game.
+
+        :returns: The list of all stamps in the base game
+        """
+
+        stamps = []
+
+        for category in (
+            FundamentalsRegionName,
+            IntermediateRegionName,
+            AdvancedRegionName,
+            ExpertRegionName,
+        ):
+            for peak in category:
+                if peak.name == "CATEGORY":
+                    continue
+
+                if (stamp := self.get_data_stamp(peak)) is not None:
+                    stamps.append(stamp)
+
+        return stamps
+
+
     def __create_data_str(
         self,
         name: str,

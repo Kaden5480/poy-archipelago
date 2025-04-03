@@ -2,6 +2,7 @@ from typing import Callable, \
                    ClassVar
 
 from worlds.AutoWorld import World
+from worlds.generic.Rules import add_rule
 from BaseClasses import CollectionState, \
                         Entrance, \
                         Item, \
@@ -29,6 +30,18 @@ class PeaksItem(Item):
 
 class PeaksLocation(Location):
     game: str = GAME
+
+    def poy_add_rule(
+        self,
+        rule: Callable[[CollectionState], bool]
+    ) -> None:
+        """
+        Adds a rule for accessing the item at this location.
+
+        :param rule: The rule to add to this location
+        """
+
+        add_rule(self, rule)
 
 
 class PeaksRegion(Region):
@@ -70,6 +83,21 @@ class PeaksRegion(Region):
         """
 
         return self.__poy_connections.get(region.value, None)
+
+    def poy_add_rule(
+        self,
+        region: RegionName,
+        rule: Callable[[CollectionState], bool]
+    ) -> None:
+        """
+        Sets an access rule for a connection to a given region.
+
+        :param region: The region the connection is to
+        :param rule: The access rule to set on the connection to this region
+        """
+
+        if (connection := self.poy_get_connection(region)) is not None:
+            add_rule(connection, rule)
 
 
 class PeaksWorld(World):
@@ -170,8 +198,6 @@ class PeaksWorld(World):
             self.multiworld
         )
 
-        print(f"Created region: {name}")
-
         self.poy_created_regions[name.value] = region
         self.multiworld.regions.append(region)
 
@@ -213,6 +239,56 @@ class PeaksWorld(World):
         """
 
         return self.poy_get_region_str(name.value)
+
+    def poy_get_location_str(
+        self,
+        name: str
+    ) -> PeaksLocation | None:
+        """
+        Gets a location from the multiworld
+        given its name as a string.
+
+        :param name: The name of the location
+        :returns: The location if found, None otherwise
+        """
+
+        try:
+            return self.multiworld.get_location(name, self.player)
+        except KeyError:
+            return None
+
+    def poy_get_location_suffix(
+        self,
+        region: RegionName,
+        suffix: LocationSuffix
+    ) -> PeaksLocation | None:
+        """
+        Gets a location from the multiworld
+        given a region and its suffix.
+
+        :param region: The region the location is within
+        :param suffix: The suffix of the location
+        :returns: The location if found, None otherwise
+        """
+
+        return self.poy_get_location_str(
+            f"{region.value} {suffix.value}"
+        )
+
+    def poy_get_location(
+        self,
+        name: LocationName
+    ) -> PeaksLocation | None:
+        """
+        Gets a location from the multiworld.
+
+        :param name: The name of the location to get
+        :returns: The location if found, None otherwise
+        """
+
+        return self.poy_get_location_str(
+            name.value
+        )
 
     def poy_connect_category(
         self,
@@ -264,21 +340,15 @@ class PeaksWorld(World):
         if cabin_gales is not None:
             cabin_gales.poy_connect(
                 self.poy_get_region(FundamentalsRegionName.CATEGORY),
-                self.poy_rules.has_item(
-                    BaseItemName.BOOK_GALES_FUNDAMENTALS
-                )
+                self.poy_rules.has_item(BaseItemName.BOOK_GALES_FUNDAMENTALS)
             )
             cabin_gales.poy_connect(
                 self.poy_get_region(IntermediateRegionName.CATEGORY),
-                self.poy_rules.has_item(
-                    BaseItemName.BOOK_GALES_INTERMEDIATE
-                )
+                self.poy_rules.has_item(BaseItemName.BOOK_GALES_INTERMEDIATE)
             )
             cabin_gales.poy_connect(
                 self.poy_get_region(AdvancedRegionName.CATEGORY),
-                self.poy_rules.has_item(
-                    BaseItemName.BOOK_GALES_ADVANCED
-                )
+                self.poy_rules.has_item(BaseItemName.BOOK_GALES_ADVANCED)
             )
 
         # Northern range categories
@@ -289,30 +359,22 @@ class PeaksWorld(World):
         if cabin_northern is not None:
             cabin_northern.poy_connect(
                 self.poy_get_region(ExpertRegionName.CATEGORY),
-                self.poy_rules.has_item(
-                    BaseItemName.BOOK_NORTHERN_EXPERT
-                )
+                self.poy_rules.has_item(BaseItemName.BOOK_NORTHERN_EXPERT)
             )
 
         # Alps DLC categories
         if cabin_alps is not None:
             cabin_alps.poy_connect(
                 self.poy_get_region(EssentialsRegionName.CATEGORY),
-                self.poy_rules.has_item(
-                    DlcItemName.BOOK_ALPS_ESSENTIALS
-                )
+                self.poy_rules.has_item(DlcItemName.BOOK_ALPS_ESSENTIALS)
             )
             cabin_alps.poy_connect(
                 self.poy_get_region(GreatsRegionName.CATEGORY),
-                self.poy_rules.has_item(
-                    DlcItemName.BOOK_ALPS_GREATS
-                )
+                self.poy_rules.has_item(DlcItemName.BOOK_ALPS_GREATS)
             )
             cabin_alps.poy_connect(
                 self.poy_get_region(ArcticRegionName.CATEGORY),
-                self.poy_rules.has_item(
-                    DlcItemName.BOOK_ALPS_ARCTIC
-                )
+                self.poy_rules.has_item(DlcItemName.BOOK_ALPS_ARCTIC)
             )
 
         ### Connections between cabins
@@ -323,9 +385,7 @@ class PeaksWorld(World):
         if cabin_gales is not None:
             cabin_gales.poy_connect(
                 cabin_northern,
-                self.poy_rules.has_item(
-                    BaseItemName.TICKET_NORTHERN_RANGE
-                )
+                self.poy_rules.has_item(BaseItemName.TICKET_NORTHERN_RANGE)
             )
             cabin_gales.poy_connect(cabin_alps)
 
@@ -468,6 +528,30 @@ class PeaksWorld(World):
         Creates all items, adding them to the world's item pool.
         """
 
+        def can_make(data: LocationData) -> bool:
+            item_name = data.item_name
+
+            item_count: int = len(self.poy_created_items.get(item_name, []))
+            max_item_count: int = self.poy_data.locations \
+                    .get_max_item_count(item_name)
+
+            return item_count < max_item_count
+
+        def should_lock(data: LocationData) -> bool:
+            # If a stamp, check if randomised
+            if data.name.endswith(LocationSuffix.STAMP):
+                return not self.options.randomise_stamps
+
+            # If time attack, always lock
+            if data.name.endswith(LocationSuffix.TIME_ATTACK):
+                return True
+
+            # Otherwise, check if other items should be randomised
+            if not self.options.randomise_items:
+                return True
+
+            return False
+
         local_pool: list[PeaksItem] = []
 
         # Iterate over all locations creating
@@ -475,41 +559,28 @@ class PeaksWorld(World):
         # have been pushed to the multiworld
         data: LocationData
         for data in self.poy_data.locations:
-            # Check this region is enabled
+            # Check the region this location is in is enabled
             region = self.poy_get_region_str(data.region)
             if region is None:
                 continue
 
-            item_name: str = data.item_name
-
-            item_count: int = len(self.poy_created_items.get(item_name, []))
-            max_item_count: int = self.poy_data.locations \
-                    .get_max_item_count(item_name)
+            # Check if the location can be made
+            if can_make(data) is False:
+                continue
 
             location: PeaksLocation = PeaksLocation(
-                self.player,
-                data.name,
-                data.id,
-                region
+                self.player, data.name,
+                data.id, region
             )
             location.progress_type = data.progress_type
+            item: PeaksItem = self.create_item(data.item_name)
 
-            item: PeaksItem = self.create_item(item_name)
-
-            # Lock stamps and time attack
-            if not self.options.randomise_stamps \
-                    and data.name.endswith(LocationSuffix.STAMP) is True:
+            # Check if this location should lock an item
+            if should_lock(data) is True:
                 location.place_locked_item(item)
-
-            elif data.name.endswith(LocationSuffix.TIME_ATTACK) is True:
-                location.place_locked_item(item)
-
-            # Or just add it to the pool if randomised
-            elif item_count < max_item_count:
-                if self.options.randomise_items:
-                    local_pool.append(item)
-                else:
-                    location.place_locked_item(item)
+            # Otherwise, just add it to the pool for randomisation
+            else:
+                local_pool.append(item)
 
             region.locations.append(location)
 
@@ -522,6 +593,132 @@ class PeaksWorld(World):
         and items to try to mitigate soft locks.
         """
 
+        # You can't access some locations without enough stamps
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.BOOK_GALES_INTERMEDIATE,
+            self.poy_rules.unlocked_intermediate()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.BOOK_GALES_ADVANCED,
+            self.poy_rules.unlocked_advanced()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TICKET_NORTHERN_RANGE,
+            self.poy_rules.unlocked_expert()
+        )
+        self.poy_rules.add_loc_rule(
+            DlcLocationName.BOOK_ALPS_GREATS,
+            self.poy_rules.unlocked_greats()
+        )
+        self.poy_rules.add_loc_rule(
+            DlcLocationName.BOOK_ALPS_ARCTIC,
+            self.poy_rules.unlocked_arctic()
+        )
+
+        # Lock locations for completing all peaks in categories
+        for location in (
+            BaseLocationName.ALL_FUNDAMENTALS_MEDAL,
+            BaseLocationName.ALL_FUNDAMENTALS_CHALK,
+            BaseLocationName.ALL_FUNDAMENTALS_COFFEE,
+            BaseLocationName.ALL_FUNDAMENTALS_ROPES,
+        ):
+            self.poy_rules.add_loc_rule(
+                location,
+                self.poy_rules.all_fundamentals()
+            )
+
+        for location in (
+            BaseLocationName.ALL_INTERMEDIATE_MEDAL,
+            BaseLocationName.ALL_INTERMEDIATE_CHALK,
+            BaseLocationName.ALL_INTERMEDIATE_COFFEE,
+            BaseLocationName.ALL_INTERMEDIATE_ROPES,
+        ):
+            self.poy_rules.add_loc_rule(
+                location,
+                self.poy_rules.all_intermediate()
+            )
+
+        for location in (
+            BaseLocationName.ALL_ADVANCED_MEDAL,
+            BaseLocationName.ALL_ADVANCED_CHALK,
+            BaseLocationName.ALL_ADVANCED_COFFEE,
+            BaseLocationName.ALL_ADVANCED_ROPES,
+        ):
+            self.poy_rules.add_loc_rule(
+                location,
+                self.poy_rules.all_advanced()
+            )
+
+        # Tools
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_ARTEFACT_MAP,
+            self.poy_rules.unlocked_barometer()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_BAROMETER,
+            self.poy_rules.unlocked_barometer()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_CHALK_BAG,
+            self.poy_rules.unlocked_chalk()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_COFFEE,
+            self.poy_rules.unlocked_coffee()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_CRAMPONS_6,
+            self.poy_rules.unlocked_crampons_6()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_CRAMPONS_10,
+            self.poy_rules.unlocked_crampons_10()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_ICE_AXES,
+            self.poy_rules.unlocked_ice_axes()
+        )
+        # Skip monocular, its only rule is on unlocking
+        # three brothers
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_PHONOGRAPH,
+            self.poy_rules.unlocked_phonograph()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_PIPE,
+            self.poy_rules.unlocked_pipe()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_POCKETWATCH,
+            self.poy_rules.unlocked_pocketwatch()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.TOOL_ROPE,
+            self.poy_rules.unlocked_rope()
+        )
+        self.poy_rules.add_loc_rule(
+            BaseLocationName.ALL_PICTURES_ROPE_DOUBLE,
+            self.poy_rules.has_all_photograph()
+        )
+
+        # Require items for going from cabins to their
+        # associated ice peak categories
+        for cabin, category in (
+            (CabinRegionName.NORTHERN, ExpertRegionName.CATEGORY),
+            (CabinRegionName.ALPS,     ArcticRegionName.CATEGORY),
+        ):
+            # Ice axes are always required
+            self.poy_rules.add_region_rule(
+                cabin, category, self.poy_rules.has_ice_axes()
+            )
+
+            # Crampons are only required if the player wants them
+            if self.options.require_crampons:
+                self.poy_rules.add_region_rule(
+                    cabin, category, self.poy_rules.has_crampons()
+                )
+
+        # Set the victory condition
         self.multiworld.completion_condition[self.player] \
                 = self.poy_rules.has_item(BaseItemName.SHOE)
 

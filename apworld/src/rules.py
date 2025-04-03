@@ -6,8 +6,8 @@ from BaseClasses import CollectionState
 from .data.data_store import DataStore
 
 from .names.items import *
+from .names.locations import *
 from .names.regions import *
-
 
 class Rules:
     """
@@ -44,6 +44,40 @@ class Rules:
     @property
     def world(self) -> World:
         return self.__world
+
+    # Allow more easily adding rules
+    def add_loc_rule(
+        self,
+        location: LocationName,
+        rule: Callable[[CollectionState], bool]
+    ) -> None:
+        """
+        Adds a rule to a location, if it exists.
+
+        :param location: The location to add a rule for
+        :param rule: The rule to add for accessing this location
+        """
+
+        if (loc := self.world.poy_get_location(location)) is not None:
+            loc.poy_add_rule(rule)
+
+    def add_region_rule(
+        self,
+        region_a: RegionName,
+        region_b: RegionName,
+        rule: Callable[[CollectionState], bool]
+    ) -> None:
+        """
+        Adds a rule to go from region_a to region_b.
+
+        :param region_a: The beginning region
+        :param region_b: The end region
+        :param rule: The rule for whether region_b
+                     can be accessed from region_a
+        """
+
+        if (reg_a := self.world.poy_get_region(region_a)) is not None:
+            reg_a.poy_add_rule(region_b, rule)
 
     # Basic checks
     def has_item(
@@ -82,9 +116,26 @@ class Rules:
 
         return lambda state: state.has(item.name, self.player, count)
 
+    def has_any(
+        self,
+        items: list[ItemName],
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether any of the provided items
+        are currently accessible.
+
+        :param items: The items to check
+        :returns: The rule for checking this
+        """
+
+        names = list(map(str, items))
+        return lambda state: state.has_any(
+            names, self.player
+        )
+
     # Tool checks
     def has_crampons(
-        self,
+        self
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether crampons are currently unlocked.
@@ -92,11 +143,11 @@ class Rules:
         :returns: The rule for checking this
         """
 
-        return lambda state: self.has_item(state, ItemName.TOOL_CRAMPONS_6) \
-                or self.has_item(state, ItemName.TOOL_CRAMPONS_10)
+        return lambda state: self.has_item(state, BaseItemName.TOOL_CRAMPONS_6) \
+                or self.has_item(state, BaseItemName.TOOL_CRAMPONS_10)
 
     def has_ice_axes(
-        self,
+        self
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether ice axes are currently unlocked.
@@ -104,11 +155,11 @@ class Rules:
         :returns: The rule for checking this
         """
 
-        return lambda state: self.has_item(state, ItemName.TOOL_ICE_AXES)
+        return lambda state: self.has_item(state, BaseItemName.TOOL_ICE_AXES)
 
     # Event checks
     def has_all_photograph(
-        self,
+        self
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether all of the picture pieces
@@ -125,7 +176,7 @@ class Rules:
         return lambda state: state.has_all_counts(items, self.player)
 
     def has_all_artefacts(
-        self,
+        self
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether all artefacts are unlocked.
@@ -156,6 +207,164 @@ class Rules:
         }
 
         return lambda state: state.has_all_counts(items, self.player)
+
+    # Specific tool checks
+    def unlocked_barometer(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the barometer can be unlocked.
+
+        :returns: The rule to check this
+        """
+
+        items = [
+            BaseItemName.HAT_1,
+            BaseItemName.HAT_2,
+            BaseItemName.SHOE,
+            BaseItemName.SLEEPING_BAG,
+            BaseItemName.SAFETY_HELMET,
+            BaseItemName.BACKPACK,
+            BaseItemName.SHOVEL,
+            BaseItemName.PICTURE_FRAGMENT,
+            BaseItemName.COFFEE_2,
+        ]
+
+        has_stamps = self.has_stamps(FundamentalsRegionName, 5)
+        has_any_item = self.has_any(items)
+
+        return lambda state: has_stamps(state) and has_any_item(state)
+
+    def unlocked_chalk(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the chalk bag can be unlocked.
+
+        :returns: The rule to check this
+        """
+
+        has_stamps = self.has_stamps(FundamentalsRegionName, 18)
+
+        return lambda state: self.unlocked_advanced()(state) \
+                or has_stamps(state)
+
+    def unlocked_coffee(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether coffee (the tool) can be unlocked.
+
+        :returns: The rule to check this
+        """
+
+        twins = self.has_stamp(FundamentalsRegionName.THE_TWINS)
+        has_coffee = self.has_item(BaseItemName.COFFEE_2)
+
+        return lambda state: twins(state) or has_coffee(state)
+
+    def unlocked_crampons_6(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the 6 point crampons can be unlocked.
+
+        :returns: The rule to check this
+        """
+
+        old_groves = self.has_stamp(
+            FundamentalsRegionName.OLD_GROVES_SKELF
+        )
+        enough_peaks = self.has_stamps(
+            FundamentalsRegionName, 10
+        )
+
+        return lambda state: old_groves(state) or enough_peaks(state)
+
+    def unlocked_crampons_10(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the 10 point crampons can be unlocked.
+
+        :returns: The rule to check this
+        """
+
+        advanced = self.has_stamps(AdvancedRegionName, 3)
+        base_peaks = self.has_stamps_base(22)
+
+        return lambda state: advanced(state) and base_peaks(state)
+
+    def unlocked_ice_axes(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether ice axes can be unlocked.
+
+        :returns: The rule to check this
+        """
+
+        ymirs = self.has_stamp(AdvancedRegionName.YMIRS_SHADOW)
+        advanced = self.has_stamps(AdvancedRegionName, 3)
+
+        return lambda state: ymirs(state) or advanced(state)
+
+    def unlocked_phonograph(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the phonograph can be unlocked.
+
+        :returns: The rule to check this
+        """
+
+        paltry = self.has_stamp(FundamentalsRegionName.PALTRY_PEAK)
+        fundamentals = self.has_stamps(FundamentalsRegionName, 2)
+
+        return lambda state: paltry(state) or fundamentals(state)
+
+    def unlocked_pipe(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the pipe can be unlocked.
+
+        TODO: implement this and time attack stuff
+
+        :returns: The rule to check this
+        """
+
+        return lambda state: True
+
+    def unlocked_pocketwatch(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the pocketwatch can be unlocked.
+
+        :returns: The rule to check this
+        """
+
+        return self.has_stamps(IntermediateRegionName, 2)
+
+    def unlocked_rope(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether rope can be unlocked.
+
+        :returns: The rule to check this
+        """
+
+        gray_gully = self.has_stamp(
+            FundamentalsRegionName.GRAY_GULLY
+        )
+        fundamentals = self.has_stamps(
+            FundamentalsRegionName, 3
+        )
+
+        return lambda state: gray_gully(state) \
+                or fundamentals(state)
 
     # Stamp checks
     def has_stamp(
@@ -196,9 +405,28 @@ class Rules:
             for data in stamps
         ].count(True) >= count
 
+    def has_stamps_base(
+        self,
+        count: int
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether the player has unlocked at least
+        `count` base game stamps.
+
+        :param count: The number of base game stamps to check for
+        :returns: The rule for checking this
+        """
+
+        stamps = self.store.items.get_data_stamps_base()
+
+        return lambda state: [
+            state.has(data.name, self.player)
+            for data in stamps
+        ].count(True) >= count
+
     # Category unlock checks
     def unlocked_intermediate(
-        self,
+        self
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether the intermediate category
@@ -210,7 +438,7 @@ class Rules:
         return self.has_stamps(FundamentalsRegionName, 15)
 
     def unlocked_advanced(
-        self,
+        self
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether the advanced category
@@ -222,7 +450,7 @@ class Rules:
         return self.has_stamps(IntermediateRegionName, 5)
 
     def unlocked_expert(
-        self,
+        self
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether the expert category
@@ -234,7 +462,7 @@ class Rules:
         return self.has_stamps(AdvancedRegionName, 3)
 
     def unlocked_greats(
-        self,
+        self
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether the alpine greats category
@@ -246,7 +474,7 @@ class Rules:
         return self.has_stamps(EssentialsRegionName, 10)
 
     def unlocked_arctic(
-        self,
+        self
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether the arduous and arctic category
@@ -256,3 +484,54 @@ class Rules:
         """
 
         return self.has_stamps(GreatsRegionName, 3)
+
+    # All peaks unlocks
+    def all_fundamentals(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether all 20 fundamentals have been completed.
+
+        :returns: The rule for checking this
+        """
+
+        return self.has_stamps(FundamentalsRegionName, 20)
+
+    def all_intermediate(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether all 10 intermediates have been completed.
+        """
+
+        return self.has_stamps(IntermediateRegionName, 10)
+
+    def all_advanced(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether all 5 advanced have been completed.
+        """
+
+        return self.has_stamps(AdvancedRegionName, 5)
+
+    def all_expert(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether all 2 expert peaks have been completed.
+        """
+
+        return self.has_stamps(ExpertRegionName, 2)
+
+    def all_base_peaks(
+        self
+    ) -> Callable[[CollectionState], bool]:
+        """
+        Checks whether all base game stamps have been collected.
+        """
+
+        return lambda state: self.all_fundamentals()(state) \
+                and self.all_intermediate()(state) \
+                and self.all_advanced()(state) \
+                and self.all_expert()(state)
