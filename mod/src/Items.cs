@@ -101,7 +101,7 @@ namespace PoYArchipelago {
             CreateItem("Expert Statue",            () => manager.hasArtefact_Statue3 = true);
 
             // Consumables
-            CreateItem("Bird Seeds +1",            () => manager.extraBirdSeedsUses++);
+            CreateItem("Bird Seeds +1",            () => manager.extraBirdSeedUses++);
             CreateItem("Chalk +2",                 () => manager.extraChalkUses += 2);
             CreateItem("Coffee +2",                () => manager.extraCoffeeUses += 2);
             CreateItem("Coffee +5",                () => manager.extraCoffeeUses += 5);
@@ -290,44 +290,44 @@ namespace PoYArchipelago {
             CreateItem("Cromlech (Stamp)",                () => UpdateStamp(ref manager.cromlech,            1));
 
             // Advanced
-            CreateItem("Walker's Pillar (Stamp)",         () => UpdateStamp(ref manager.walkerspillar,       2);
-            CreateItem("Great Gaol (Stamp)",              () => UpdateStamp(ref manager.greatgaol,           2);
-            CreateItem("Eldenhorn (Stamp)",               () => UpdateStamp(ref manager.eldenhorn,           2);
-            CreateItem("St. Haelga (Stamp)",              () => UpdateStamp(ref manager.sthaelga,            2);
-            CreateItem("Ymir's Shadow (Stamp)",           () => UpdateStamp(ref manager.ymirsshadow,         2);
+            CreateItem("Walker's Pillar (Stamp)",         () => UpdateStamp(ref manager.walkerspillar,       2));
+            CreateItem("Great Gaol (Stamp)",              () => UpdateStamp(ref manager.greatgaol,           2));
+            CreateItem("Eldenhorn (Stamp)",               () => UpdateStamp(ref manager.eldenhorn,           2));
+            CreateItem("St. Haelga (Stamp)",              () => UpdateStamp(ref manager.sthaelga,            2));
+            CreateItem("Ymir's Shadow (Stamp)",           () => UpdateStamp(ref manager.ymirsshadow,         2));
 
             // Expert
-            CreateItem("Great Bulwark (Stamp)",           () => UpdateStamp(ref manager.greatbulwark,        3);
-            CreateItem("Solemn Tempest (Stamp)",          () => UpdateStamp(ref manager.solemntempest,       3);
+            CreateItem("Great Bulwark (Stamp)",           () => UpdateStamp(ref manager.greatbulwark,        3));
+            CreateItem("Solemn Tempest (Stamp)",          () => UpdateStamp(ref manager.solemntempest,       3));
 
             // Essentials
-            CreateItem("Tutor's Tower (Stamp)",           () => UpdateStamp(ref manager.tutortower,          4);
-            CreateItem("Stougr Boulder (Stamp)",          () => UpdateStamp(ref manager.stougrboulder,       4);
-            CreateItem("Mara's Arch (Stamp)",             () => UpdateStamp(ref manager.marasarch,           4);
-            CreateItem("Grainne Spire (Stamp)",           () => UpdateStamp(ref manager.grainnespire,        4);
-            CreateItem("Great Bók Tree (Stamp)",          () => UpdateStamp(ref manager.greatboktree,        4);
-            CreateItem("Treppenwald (Stamp)",             () => UpdateStamp(ref manager.treppenwald,         4);
-            CreateItem("Castle of the Swan King (Stamp)", () => UpdateStamp(ref manager.castleoftheswanking, 4);
-            CreateItem("Seaside Tribune (Stamp)",         () => UpdateStamp(ref manager.seasidetribune,      4);
-            CreateItem("Ivory Granites (Stamp)",          () => UpdateStamp(ref manager.ivorygranites,       4);
-            CreateItem("Old Rekkja (Stamp)",              () => UpdateStamp(ref manager.oldrekkja,           4);
-            CreateItem("Quietude (Stamp)",                () => UpdateStamp(ref manager.quietude,            4);
-            CreateItem("Eljun's Folly (Stamp)",           () => UpdateStamp(ref manager.eljunsfolly,         4);
+            CreateItem("Tutor's Tower (Stamp)",           () => UpdateStamp(ref manager.tutortower,          4));
+            CreateItem("Stougr Boulder (Stamp)",          () => UpdateStamp(ref manager.stougrboulder,       4));
+            CreateItem("Mara's Arch (Stamp)",             () => UpdateStamp(ref manager.marasarch,           4));
+            CreateItem("Grainne Spire (Stamp)",           () => UpdateStamp(ref manager.grainnespire,        4));
+            CreateItem("Great Bók Tree (Stamp)",          () => UpdateStamp(ref manager.greatboktree,        4));
+            CreateItem("Treppenwald (Stamp)",             () => UpdateStamp(ref manager.treppenwald,         4));
+            CreateItem("Castle of the Swan King (Stamp)", () => UpdateStamp(ref manager.castleoftheswanking, 4));
+            CreateItem("Seaside Tribune (Stamp)",         () => UpdateStamp(ref manager.seasidetribune,      4));
+            CreateItem("Ivory Granites (Stamp)",          () => UpdateStamp(ref manager.ivorygranites,       4));
+            CreateItem("Old Rekkja (Stamp)",              () => UpdateStamp(ref manager.oldrekkja,           4));
+            CreateItem("Quietude (Stamp)",                () => UpdateStamp(ref manager.quietude,            4));
+            CreateItem("Eljun's Folly (Stamp)",           () => UpdateStamp(ref manager.eljunsfolly,         4));
 
             // Alpine Greats
-            CreateItem("Einvald Falls (Stamp)",           () => UpdateStamp(ref manager.einvaldfalls,        5);
-            CreateItem("Almáttr Dam (Stamp)",             () => UpdateStamp(ref manager.almattrdam,          5);
-            CreateItem("Dunderhorn (Stamp)",              () => UpdateStamp(ref manager.dunderhorn,          5);
-            CreateItem("Mhòr Druim (Stamp)",              () => UpdateStamp(ref manager.mhordruim,           5);
-            CreateItem("Welkin Pass (Stamp)",             () => UpdateStamp(ref manager.welkinpass,          5);
+            CreateItem("Einvald Falls (Stamp)",           () => UpdateStamp(ref manager.einvaldfalls,        5));
+            CreateItem("Almáttr Dam (Stamp)",             () => UpdateStamp(ref manager.almattrdam,          5));
+            CreateItem("Dunderhorn (Stamp)",              () => UpdateStamp(ref manager.dunderhorn,          5));
+            CreateItem("Mhòr Druim (Stamp)",              () => UpdateStamp(ref manager.mhordruim,           5));
+            CreateItem("Welkin Pass (Stamp)",             () => UpdateStamp(ref manager.welkinpass,          5));
 
             // Arduous and Arctic
-            CreateItem("Seigr Craeg (Stamp)",             () => UpdateStamp(ref manager.seigrcraeg,          6);
-            CreateItem("Ullr's Chasm (Stamp)",            () => UpdateStamp(ref manager.ullrschasm,          6);
-            CreateItem("Great Silf (Stamp)",              () => UpdateStamp(ref manager.greatsilf,           6);
-            CreateItem("Towering Vísir (Stamp)",          () => UpdateStamp(ref manager.toweringvisir,       6);
-            CreateItem("Eldris Wall (Stamp)",             () => UpdateStamp(ref manager.eldriswall,          6);
-            CreateItem("Mount Mhòrgorm (Stamp)",          () => UpdateStamp(ref manager.mountmhorgorm,       6);
+            CreateItem("Seigr Craeg (Stamp)",             () => UpdateStamp(ref manager.seigrcraeg,          6));
+            CreateItem("Ullr's Chasm (Stamp)",            () => UpdateStamp(ref manager.ullrschasm,          6));
+            CreateItem("Great Silf (Stamp)",              () => UpdateStamp(ref manager.greatsilf,           6));
+            CreateItem("Towering Vísir (Stamp)",          () => UpdateStamp(ref manager.toweringvisir,       6));
+            CreateItem("Eldris Wall (Stamp)",             () => UpdateStamp(ref manager.eldriswall,          6));
+            CreateItem("Mount Mhòrgorm (Stamp)",          () => UpdateStamp(ref manager.mountmhorgorm,       6));
         }
     }
 }
