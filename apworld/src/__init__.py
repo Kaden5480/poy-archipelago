@@ -89,6 +89,7 @@ class PeaksWorld(World):
     poy_rules: Rules
 
     poy_created_regions: dict[RegionName, PeaksRegion] = {}
+    poy_created_items: dict[str, list[ItemData]] = {}
 
     def __init__(self, *args, **kwargs) -> None:
         self.poy_rules = Rules(self.poy_data, self)
@@ -99,15 +100,31 @@ class PeaksWorld(World):
     def poy_create_region(self, name: RegionName) -> None:
         """
         Creates a region given its name.
+        This also creates all locations for this region.
 
         :param name: The name of the region to create
         """
 
+        locations: list[LocationData] = self.poy_data.locations.get_data_for_region(name)
         data: RegionData = self.poy_data.regions.get_data(name)
-        self.poy_created_regions[name] = PeaksRegion(
+
+        region: PeaksRegion = PeaksRegion(
             data.name, self.player,
             self.multiworld
         )
+
+        for data in locations:
+            location = PeaksLocation(
+                self.player,
+                data.name,
+                data.id,
+                region
+            )
+
+            location.place_locked_item(self.create_item(data.item_name))
+            region.locations.append(location)
+
+        self.poy_created_regions[name] = region
 
     def poy_create_regions(
         self,
@@ -275,12 +292,11 @@ class PeaksWorld(World):
         """
 
         # Access to the fundamentals and essentials book is a given
-        self.multiworld.push_precollected(
-            self.create_item(BaseItemName.BOOK_GALES_FUNDAMENTALS.value)
-        )
-        self.multiworld.push_precollected(
-            self.create_item(DlcItemName.BOOK_ALPS_ESSENTIALS.value)
-        )
+        book_0 = self.poy_create_item(BaseItemName.BOOK_GALES_FUNDAMENTALS.value)
+        book_1 = self.poy_create_item(DlcItemName.BOOK_ALPS_ESSENTIALS.value)
+
+        self.multiworld.push_precollected(book_0)
+        self.multiworld.push_precollected(book_1)
 
     def create_regions(self) -> None:
         """
@@ -342,13 +358,51 @@ class PeaksWorld(World):
             item.id, self.player
         )
 
+    def poy_create_item(self, name: str) -> PeaksItem:
+        """
+        Creates an item and adds it to the item pool,
+        along with tracking it in poy_created_items.
+
+        :param name: The name of the item to make
+        :returns: The created item
+        """
+
+        item = self.create_item(name)
+
+        if name not in self.poy_created_items:
+            self.poy_created_items[name] = []
+
+        self.poy_created_items[name].append(item)
+
+        return item
+
     def create_items(self) -> None:
         """
         Creates all items, adding them to the world's item pool.
         """
 
-        for data in self.poy_data.items:
-            item = self.create_item(data.name)
+        # Iterate over all locations creating
+        # their default items, unless they already
+        # have been pushed to the multiworld
+        location: LocationData
+        for location in self.poy_data.locations:
+            item_name = location.item_name
+            item_count = len(self.poy_created_items[item_name])
+
+            # Check whether enough of this item has
+            # already been made
+            max_item_count = self.poy_data.locations \
+                    .get_max_item_count(item_name)
+
+            if item_count >= max_item_count:
+                continue
+
+            # Otherwise, add the item
+            item = self.poy_create_item(item_name)
+            local_pool.append(item)
+
+        # Add all items to the item pool
+        self.multiworld.itempool += local_pool
 
     def set_rules(self) -> None:
         """
