@@ -1,9 +1,12 @@
 using BepInEx;
+using HarmonyLib;
 using UnityEngine.SceneManagement;
 
 namespace PoYArchipelago {
     [BepInPlugin("com.github.Kaden5480.poy-archipelago", "PoY Archipelago", PluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin {
+        private Patcher patcher { get; } = new Patcher();
+
         /**
          * <summary>
          * Executes when the plugin is being loaded.
