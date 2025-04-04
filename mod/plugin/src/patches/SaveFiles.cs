@@ -15,9 +15,10 @@ namespace PoYArchipelago.Patches {
      */
     [HarmonyPatch(typeof(CheckStats), "CheckInitialProgressOnce")]
     static class DisableInitialGlobalStats {
-        static void Prefix() {
+        static bool Prefix() {
             ES3Settings settings = new ES3Settings("PoY_AP_global_stats.es3", ES3.Location.File);
             ES3.Save("receivedInitialScoreSetup", true, settings);
+            return false;
         }
     }
 
