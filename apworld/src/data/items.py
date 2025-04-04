@@ -149,6 +149,10 @@ class Items:
         stamps = []
 
         for peak in category:
+            # Ignore the category
+            if peak.name == "CATEGORY":
+                continue
+
             peak = cast(PeakName, peak)
             if (stamp := self.get_data_stamp(peak)) is not None:
                 stamps.append(stamp)
