@@ -1,4 +1,4 @@
-from typing import Iterable, \
+from typing import Iterator, \
                    cast
 
 from .id_handler import IDHandler
@@ -45,14 +45,13 @@ class Regions:
 
         self.__create_all()
 
-    def __iter__(self) -> Iterable[RegionData]:
+    def __iter__(self) -> Iterator[RegionData]:
         """
         Supports iterating over this object to
         get data for all regions.
         """
 
-        for data in self.__regions.values():
-            yield data
+        return iter(self.__regions.values())
 
     def get_data_str(
         self,

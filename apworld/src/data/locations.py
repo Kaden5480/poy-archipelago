@@ -1,4 +1,4 @@
-from typing import Iterable, \
+from typing import Iterator, \
                    cast
 
 from BaseClasses import LocationProgressType
@@ -81,14 +81,13 @@ class Locations:
 
         self.__create_all()
 
-    def __iter__(self) -> Iterable[LocationData]:
+    def __iter__(self) -> Iterator[LocationData]:
         """
         Supports iterating over this object to
         get data for all locations.
         """
 
-        for data in self.__locations.values():
-            yield data
+        return iter(self.__locations.values())
 
     @property
     def count(self) -> int:

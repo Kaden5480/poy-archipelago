@@ -1,4 +1,4 @@
-from typing import Iterable, \
+from typing import Iterator, \
                    cast
 
 from BaseClasses import ItemClassification
@@ -73,14 +73,13 @@ class Items:
 
         return len(self.__items)
 
-    def __iter__(self) -> Iterable[ItemData]:
+    def __iter__(self) -> Iterator[ItemData]:
         """
         Supports iterating over this object to get
         data for all items.
         """
 
-        for data in self.__items.values():
-            yield data
+        return iter(self.__items.values())
 
     def get_data_str(
         self,
