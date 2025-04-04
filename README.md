@@ -21,7 +21,8 @@ If you haven't installed BepInEx yet, follow the install instructions here:
 ### PoY Archipelago
 - Download the latest release
 [here](https://github.com/Kaden5480/poy-archipelago/releases).
-- The compressed zip will contain a `plugins` directory.
+- The compressed zip will contain a `patcher` and `plugins` directory.
+- Copy the files in `patchers` to `BepInEx/patchers` in your game directory.
 - Copy the files in `plugins` to `BepInEx/plugins` in your game directory.
 
 # Building from source
