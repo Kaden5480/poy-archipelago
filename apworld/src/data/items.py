@@ -1,4 +1,5 @@
-from typing import Iterable
+from typing import Iterable, \
+                   cast
 
 from BaseClasses import ItemClassification
 
@@ -92,7 +93,7 @@ class Items:
         :returns: The item data for this item
         """
 
-        return self.__items.get(name)
+        return self.__items[name]
 
     def get_data(
         self,
@@ -149,6 +150,7 @@ class Items:
         stamps = []
 
         for peak in category:
+            peak = cast(PeakName, peak)
             if (stamp := self.get_data_stamp(peak)) is not None:
                 stamps.append(stamp)
 
@@ -172,6 +174,8 @@ class Items:
             ExpertRegionName,
         ):
             for peak in category:
+                peak = cast(PeakName, peak)
+
                 if peak.name == "CATEGORY":
                     continue
 
@@ -249,13 +253,15 @@ class Items:
         :param category: The category to create stamp items for
         """
 
-        for region in category:
+        for peak in category:
+            peak = cast(PeakName, peak)
+
             # The category regions don't need stamps though
-            if region.name == "CATEGORY":
+            if peak.name == "CATEGORY":
                 continue
 
             self.__create_data_suffix(
-                ItemSuffix.STAMP, region,
+                ItemSuffix.STAMP, peak,
                 ItemClassification.progression
             )
 

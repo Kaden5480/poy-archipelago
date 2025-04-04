@@ -124,7 +124,7 @@ class Rules:
 
     def has_any(
         self,
-        items: list[ItemName],
+        items: list[BaseItemName] | list[DlcItemName],
     ) -> Callable[[CollectionState], bool]:
         """
         Checks whether any of the provided items
@@ -396,6 +396,10 @@ class Rules:
         """
 
         data = self.store.items.get_data_stamp(peak)
+
+        # There should always be a stamp for a peak
+        assert data is not None
+
         return lambda state: state.has(data.name, self.player)
 
     def has_stamps(

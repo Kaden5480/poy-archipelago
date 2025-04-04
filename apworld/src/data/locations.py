@@ -1,4 +1,5 @@
-from typing import Iterable
+from typing import Iterable, \
+                   cast
 
 from BaseClasses import LocationProgressType
 
@@ -187,6 +188,8 @@ class Locations:
         time_attacks = []
 
         for peak in category:
+            peak = cast(PeakName, peak)
+
             if peak.name == "CATEGORY":
                 continue
 
@@ -223,6 +226,8 @@ class Locations:
         stamps = []
 
         for peak in category:
+            peak = cast(PeakName, peak)
+
             if (stamp := self.get_data_stamp(peak)) is not None:
                 stamps.append(stamp)
 
@@ -336,14 +341,16 @@ class Locations:
         :param category: The category to create stamps for
         """
 
-        for region in category:
+        for peak in category:
+            peak = cast(PeakName, peak)
+
             # The category regions don't need stamps though
-            if region.name == "CATEGORY":
+            if peak.name == "CATEGORY":
                 continue
 
             self.__create_data_suffix(
                 LocationSuffix.STAMP,
-                region,
+                peak,
                 ItemSuffix.STAMP,
                 LocationProgressType.PRIORITY
             )

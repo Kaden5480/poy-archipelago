@@ -1,5 +1,6 @@
 from typing import Callable, \
-                   ClassVar
+                   ClassVar, \
+                   cast
 
 from worlds.AutoWorld import World
 from worlds.generic.Rules import add_rule
@@ -51,7 +52,7 @@ class PeaksRegion(Region):
 
     def poy_connect(
         self,
-        region: "PeaksRegion",
+        region: "PeaksRegion | None",
         rule: Callable[[CollectionState], bool] | None = None
     ) -> None:
         """
@@ -122,7 +123,7 @@ class PeaksWorld(World):
     poy_rules: Rules
 
     poy_created_regions: dict[str, PeaksRegion] = {}
-    poy_created_items: dict[str, list[ItemData]] = {}
+    poy_created_items: dict[str, list[PeaksItem]] = {}
 
     def __init__(self, *args, **kwargs) -> None:
         self.poy_rules = Rules(self.poy_data, self)
@@ -212,6 +213,7 @@ class PeaksWorld(World):
         """
 
         for region in category:
+            region = cast(RegionName, region)
             self.poy_create_region(region)
 
     def poy_get_region_str(
@@ -311,6 +313,8 @@ class PeaksWorld(World):
             return
 
         for peak in category:
+            peak = cast(PeakName, peak)
+
             # Don't link the category to itself
             if peak == category_name:
                 continue
@@ -472,6 +476,7 @@ class PeaksWorld(World):
         #  - Paltry Peak
         #  ...
         for category in peak_categories:
+            category = cast(type[RegionName], category)
             self.poy_create_regions(category)
             self.poy_connect_category(category)
 
@@ -566,7 +571,6 @@ class PeaksWorld(World):
         # Iterate over all locations creating
         # their default items, unless they already
         # have been pushed to the multiworld
-        data: LocationData
         for data in self.poy_data.locations:
             # Check the region this location is in is enabled
             region = self.poy_get_region_str(data.region)
@@ -605,7 +609,7 @@ class PeaksWorld(World):
         and items to try to mitigate soft locks.
         """
 
-        basic_rules = {
+        basic_rules: dict[LocationName, Callable[[CollectionState], bool]] = {
             # You can't access some locations without enough stamps
             BaseLocationName.BOOK_GALES_INTERMEDIATE:
             self.poy_rules.unlocked_intermediate(),
@@ -678,24 +682,28 @@ class PeaksWorld(World):
         }
 
         # Apply all basic rules
-        for location, rule in basic_rules.items():
+        for loc, rule in basic_rules.items():
             self.poy_rules.add_loc_rule(
-                location, rule
+                loc, rule
             )
 
         # Time attacks require access to the pocketwatch
-        for category in (
+        for cat in (
             FundamentalsRegionName,
             IntermediateRegionName,
             AdvancedRegionName,
         ):
-            for peak in category:
+            for peak in cat:
+                peak = cast(PeakName, peak)
+
                 if peak.name == "CATEGORY":
                     continue
 
-                location = self.poy_get_location_suffix(
+                if (location := self.poy_get_location_suffix(
                     peak, LocationSuffix.TIME_ATTACK
-                )
+                )) is None:
+                    continue
+
                 location.poy_add_rule(self.poy_rules.has_pocketwatch())
 
         # Require items for going from cabins to their
@@ -706,13 +714,13 @@ class PeaksWorld(World):
         ):
             # Ice axes are always required
             self.poy_rules.add_region_rule(
-                cabin, category, self.poy_rules.has_ice_axes()
+                cabin, category, self.poy_rules.has_ice_axes() # type: ignore
             )
 
             # Crampons are only required if the player wants them
             if self.options.require_crampons:
                 self.poy_rules.add_region_rule(
-                    cabin, category, self.poy_rules.has_crampons()
+                    cabin, category, self.poy_rules.has_crampons() # type: ignore
                 )
 
         # Set the victory condition

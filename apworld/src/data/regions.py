@@ -1,4 +1,5 @@
-from typing import Iterable
+from typing import Iterable, \
+                   cast
 
 from .id_handler import IDHandler
 
@@ -51,7 +52,7 @@ class Regions:
         """
 
         for data in self.__regions.values():
-            return data
+            yield data
 
     def get_data_str(
         self,
@@ -90,7 +91,7 @@ class Regions:
         :returns: A list of all region data for this category
         """
 
-        return [self.get_data(peak) for peak in category]
+        return [self.get_data(cast(RegionName, peak)) for peak in category]
 
     def __create_data(
         self,
@@ -116,7 +117,7 @@ class Regions:
         """
 
         for region in category:
-            self.__create_data(region)
+            self.__create_data(cast(RegionName, region))
 
     def __create_all(self) -> None:
         """
