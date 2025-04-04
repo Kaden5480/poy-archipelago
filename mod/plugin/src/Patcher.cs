@@ -13,7 +13,8 @@ namespace PoYArchipelago {
          * </summary>
          */
         public void PatchEarly() {
-            Harmony.CreateAndPatchAll(typeof(Patches.FileInjects));
+            Harmony.CreateAndPatchAll(typeof(Patches.DisableInitialGlobalStats));
+            Harmony.CreateAndPatchAll(typeof(Patches.DisableOtherModes));
         }
     }
 }
