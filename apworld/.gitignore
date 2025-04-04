@@ -1,0 +1,4 @@
+**/.mypy_cache
+src/worlds
+src/BaseClasses.py
+src/Options.py
