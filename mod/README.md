@@ -9,7 +9,7 @@ The client mod for poy-archipelago.
 
 # Building from source
 Whichever approach you use for building from source, the resulting
-plugin can be found in `bin/`.
+patcher and plugin can be found in `bin/`.
 
 The following configurations are supported:
 - Debug

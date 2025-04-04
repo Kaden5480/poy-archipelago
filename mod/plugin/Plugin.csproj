@@ -5,15 +5,15 @@
     <AssemblyName>PoYArchipelago</AssemblyName>
     <Description>An Archipelago mod for Peaks of Yore</Description>
     <RootNamespace>$(AssemblyName)</RootNamespace>
-    <IntermediateOutputPath>../../obj/plugin/$(Configuration)/</IntermediateOutputPath>
-    <OutputPath>../../bin/plugin/$(Configuration.ToLower())/</OutputPath>
+    <IntermediateOutputPath>../obj/plugin/$(Configuration)/</IntermediateOutputPath>
+    <OutputPath>../bin/plugin/$(Configuration.ToLower())/</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="UnityEngine.Modules" Version="2019.4.36" PrivateAssets="all"/>
   </ItemGroup>
 
-  <Import Condition="Exists('../../GamePath.props')" Project="../../GamePath.props"/>
+  <Import Condition="Exists('../GamePath.props')" Project="../GamePath.props"/>
 
   <PropertyGroup Condition="'$(GamePath)' == ''">
     <GamePath Condition="'$(OS)' == 'Unix'">$(HOME)/.local/share/Steam/steamapps/common/Peaks of Yore</GamePath>

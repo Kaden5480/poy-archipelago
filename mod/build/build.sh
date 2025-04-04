@@ -13,10 +13,12 @@ BP_DIR="build/$BP_NAME"
 
 dotnet build -c Release
 
-mkdir -p "$BP_DIR"/plugins
+mkdir -p "$BP_DIR"/{patchers,plugins}
 
 # BepInEx
-cp bin/release/net472/"$MOD_NAME.dll" \
+cp bin/patcher/release/net472/"${MOD_NAME}Patcher.dll" \
+    "$BP_DIR/patchers/"
+cp bin/plugin/release/net472/"$MOD_NAME.dll" \
     "$BP_DIR/plugins/"
 cp build/README.txt "$BP_DIR/README.txt"
 

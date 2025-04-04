@@ -5,8 +5,8 @@
     <AssemblyName>PoYArchipelagoPatcher</AssemblyName>
     <Description>An Archipelago mod for Peaks of Yore (Patcher)</Description>
     <RootNamespace>$(AssemblyName)</RootNamespace>
-    <IntermediateOutputPath>../../obj/patcher/$(Configuration)/</IntermediateOutputPath>
-    <OutputPath>../../bin/patcher/$(Configuration.ToLower())/</OutputPath>
+    <IntermediateOutputPath>../obj/patcher/$(Configuration)/</IntermediateOutputPath>
+    <OutputPath>../bin/patcher/$(Configuration.ToLower())/</OutputPath>
   </PropertyGroup>
 </Project>
 <!-- vim: set et sw=2 ts=2 ft=xml: -->

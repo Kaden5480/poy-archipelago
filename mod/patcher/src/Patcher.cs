@@ -8,17 +8,20 @@ using MonoMod.Utils;
 
 namespace PoYArchipelagoPatcher {
     public static class Patcher {
-        /**
-         * <summary>
-         * The DLLs this patcher targets.
-         * </summary>
-         */
+        // The DLLs this patcher targets
         public static IEnumerable<string> TargetDLLs { get; } = new string[] {
             "Assembly-CSharp.dll",
         };
 
+        // The main module definition
         private static ModuleDefinition main;
 
+        /**
+         * <summary>
+         * Patches occurrences of normal, yfyd, and fs related paths
+         * to use a custom path instead.
+         * </summary>
+         */
         public static void PatchFilePaths(string typeName, string methodName) {
             MethodDefinition method = main.GetType(typeName).FindMethod(methodName);
             Console.WriteLine($"Patching: {main}.{typeName}.{methodName}");
@@ -46,6 +49,11 @@ namespace PoYArchipelagoPatcher {
             }
         }
 
+        /**
+         * <summary>
+         * Patches occurrences of "global_stats.es3" to use a custom path instead.
+         * </summary>
+         */
         public static void PatchGlobalStats(string typeName, string methodName) {
             MethodDefinition method = main.GetType(typeName).FindMethod(methodName);
             Console.WriteLine($"Patching: {main}.{typeName}.{methodName}");
@@ -70,9 +78,16 @@ namespace PoYArchipelagoPatcher {
             }
         }
 
+        /**
+         * <summary>
+         * Applies very early patches for allowing
+         * custom save files.
+         * </summary>
+         */
         public static void Patch(AssemblyDefinition assembly) {
             main = assembly.MainModule;
 
+            // Patch normal save data paths
             PatchFilePaths("BivouacSaveRopes",             "RemoveAllBivouacRopes");
             PatchFilePaths("BivouacSaveRopes",             "LoadStoredropes");
             PatchFilePaths("BivouacSaveRopes",             "SaveStoredRopes");
@@ -95,6 +110,7 @@ namespace PoYArchipelagoPatcher {
             PatchFilePaths("TimeAttackSetter",             "SaveTimeAttack");
             PatchFilePaths("TimeAttackTierAchievements",   "ScoreTimeAttackAchievement");
 
+            // Patch global stats paths
             PatchGlobalStats("CheckStats",                 "LoadIndividualPeakStats");
             PatchGlobalStats("CheckStats",                 "ShowStats");
             PatchGlobalStats("GameManager",                "LoadAllStats");
