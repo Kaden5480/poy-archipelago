@@ -37,18 +37,6 @@ namespace PoYArchipelago.Patches {
 
     /**
      * <summary>
-     * Prevent new instances of GameManager from being destroyed.
-     * </summary>
-     */
-    [HarmonyPatch(typeof(GameManager), "Awake")]
-    static class GameManagerAwake {
-        static bool Prefix() {
-            return GameManager.control == null;
-        }
-    }
-
-    /**
-     * <summary>
      * Allows loading different files depending
      * on the instance of GameManager being operated on.
      * </summary>
