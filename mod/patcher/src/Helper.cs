@@ -1,21 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Collections.Generic;
 using MonoMod.Utils;
 
-
 namespace PoYArchipelagoPatcher {
     public static class Helper {
-        /**
-         * <summary>
-         * Converts an instruction to a string representation.
-         * </summary>
-         */
-
         /**
          * <summary>
          * Compares two instructions for equivalence.
