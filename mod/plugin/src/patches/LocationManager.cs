@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace PoYArchipelago.Patches {
     public class LocationManager : GameManager {
-        private static LocationManager instance = null;
+        public static LocationManager instance { get; private set; } = null;
 
         public static void Create() {
             if (instance != null) {
