@@ -15,7 +15,9 @@ namespace PoYArchipelago {
         public void PatchEarly() {
             Harmony.CreateAndPatchAll(typeof(Patches.DisableInitialGlobalStats));
             Harmony.CreateAndPatchAll(typeof(Patches.DisableOtherModes));
-            Harmony.CreateAndPatchAll(typeof(Patches.GameManagerLoad));
+
+            // Create a location manager
+            Patches.LocationManager.Create();
         }
     }
 }

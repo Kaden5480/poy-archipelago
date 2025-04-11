@@ -35,6 +35,8 @@ namespace PoYArchipelago {
          * <param name="mode">The mode the scene was loaded with</param>
          */
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+            Patches.LocationManager.LoadData();
+            Patches.LocationManager.SaveData();
         }
 
         /**

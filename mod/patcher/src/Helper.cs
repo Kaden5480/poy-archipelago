@@ -130,6 +130,8 @@ namespace PoYArchipelagoPatcher {
 
                 foreach (Inst seqInst in seq) {
                     Instruction newInst = processor.Create(seqInst.opcode, seqInst.operand);
+                    Logger.LogDebug($"Created: {newInst}");
+
                     processor.InsertAfter(inst, newInst);
                     inst = newInst;
                 }
